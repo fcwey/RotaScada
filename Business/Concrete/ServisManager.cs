@@ -3,6 +3,7 @@ using Business.Constants;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +39,11 @@ namespace Business.Concrete
         public IDataResult<List<Servis>> GetList()
         {
             return new SuccessDataResult<List<Servis>>(_servisDal.GetList().ToList());
+        }
+
+        public IDataResult<List<ServisDto>> GetListDto()
+        {
+            return new SuccessDataResult<List<ServisDto>>(_servisDal.GetListServisDtos());
         }
 
         public IResult Update(Servis servis)

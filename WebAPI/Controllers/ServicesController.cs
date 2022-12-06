@@ -25,6 +25,17 @@ namespace WebAPI.Controllers
             return BadRequest();
 
         }
+        [HttpGet("getallDto")]
+        public IActionResult GetListDto()
+        {
+            var result = _servisService.GetListDto();
+            if (result.IsSuccess)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest();
+
+        }
 
         [HttpGet("getbyid")]
         public IActionResult GetById(int servisId)
@@ -37,7 +48,7 @@ namespace WebAPI.Controllers
             return BadRequest();
 
         }
-        [HttpGet("add")]
+        [HttpPost("add")]
         public IActionResult Add(Servis servis)
         {
             var result = _servisService.Add(servis);
@@ -48,7 +59,7 @@ namespace WebAPI.Controllers
             return BadRequest(result.Message);
 
         }
-        [HttpGet("update")]
+        [HttpPost("update")]
         public IActionResult Update(Servis servis)
         {
             var result = _servisService.Update(servis);

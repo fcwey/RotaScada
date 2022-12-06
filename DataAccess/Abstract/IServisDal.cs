@@ -1,5 +1,6 @@
 ﻿using Core.DataAccess;
 using Entities.Concrete;
+using Entities.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,6 +12,6 @@ namespace DataAccess.Abstract
 {
     public interface IServisDal : IEntityRepository<Servis>
     {
-  
+        List<ServisDto> GetListServisDtos();
     }
 }
