@@ -29,6 +29,20 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<ServisManager>().As<IServisService>();
             builder.RegisterType<EfServisDal>().As<IServisDal>();
 
+            builder.RegisterType<BolumManager>().As<IBolumService>();
+            builder.RegisterType<EfBolumDal>().As<IBolumDal>();
+
+            builder.RegisterType<BolumIslemManager>().As<IBolumIslemService>();
+            builder.RegisterType<EfBolumIslemDal>().As<IBolumIslemDal>();
+
+            builder.RegisterType<MalzemeManager>().As<IMalzemeService>();
+            builder.RegisterType<EfMalzemeDal>().As<IMalzemeDal>();
+
+
+            builder.RegisterType<MalzemeGrupManager>().As<IMalzemeGrupService>();
+            builder.RegisterType<EfMalzemeGrupDal>().As<IMalzemeGrupDal>();
+
+
             builder.RegisterType<UserManager>().As<IUserService>();
             builder.RegisterType<EfUserDal>().As<IUserDal>();
 

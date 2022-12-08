@@ -70,10 +70,15 @@ namespace WebAPI.Controllers
             return BadRequest(result.Message);
 
         }
-        [HttpGet("delete")]
+        [HttpPost("delete")]
         public IActionResult Delete(Servis servis)
         {
-            var result = _servisService.Delete(servis);
+            //var servisExist = _servisService.ServisExist(servis);
+            //if (!servisExist.IsSuccess)
+            //{
+            //    return BadRequest(servisExist.Message);
+            //}
+           var result = _servisService.Delete(servis);
             if (result.IsSuccess)
             {
                 return Ok(result.Message);

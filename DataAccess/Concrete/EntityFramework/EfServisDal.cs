@@ -20,7 +20,7 @@ namespace DataAccess.Concrete.EntityFramework
           
             using (var context = new NorthwindContext())
             {
-                var result = (from Servis in context.Servis
+                var result = (from Servis in context.Servisler
                               orderby Servis.Name
                              select new ServisDto()
                              {

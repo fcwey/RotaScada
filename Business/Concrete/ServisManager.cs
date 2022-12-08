@@ -1,5 +1,6 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
@@ -27,6 +28,12 @@ namespace Business.Concrete
 
         public IResult Delete(Servis servis)
         {
+            IResult result = BusinessRules.Run(CheckIfServisExists(servis.Id));
+
+            if (result != null)
+            {
+                return result;
+            }
             _servisDal.Delete(servis);
             return new SuccessResult(Messages.ServisDeleted);
         }
@@ -46,10 +53,30 @@ namespace Business.Concrete
             return new SuccessDataResult<List<ServisDto>>(_servisDal.GetListServisDtos());
         }
 
+        public Result ServisExist(Servis servis)
+        {
+            if (_servisDal.Get(p => p.Id == servis.Id) == null)
+            {
+                return new ErrorResult(Messages.ServisNotFound);
+            }
+            return new SuccessResult();
+        }
+
         public IResult Update(Servis servis)
         {
             _servisDal.Update(servis);
             return new SuccessResult(Messages.ServisUpdated);
+        }
+
+        //girilen Id ye sahip servis gerçekten varmı?
+        private IResult CheckIfServisExists(int Id)
+        {
+            var result = _servisDal.GetList(p => p.Id == Id).Any();
+            if (!result)
+            {
+                return new ErrorResult(Messages.ProductNameAlreadyExists);
+            }
+            return new SuccessResult();
         }
     }
 }

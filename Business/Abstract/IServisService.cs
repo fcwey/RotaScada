@@ -14,7 +14,7 @@ namespace Business.Abstract
         IDataResult<Servis> GetById(int servisId);
         IDataResult<List<Servis>> GetList();
         IDataResult<List<ServisDto>> GetListDto();
-        // IDataResult<List<Category>> GetListByCotegory(int categoryId);
+        Result ServisExist(Servis servis);
         IResult Add(Servis servis);
         IResult Delete(Servis servis);
         IResult Update(Servis servis);

@@ -32,5 +32,6 @@ namespace Business.Constants
         public static string ServisUpdated = "Servis aracı Başarıyla güncellendi";
         public static string ServisDeleted= "Servis aracı Başarıyla silindi";
         public static string ServisAdded = "Servis aracı Başarıyla eklendi";
+        public static string ServisNotFound = "Servis zaten sisteme kayıtlı değil";
     }
 }

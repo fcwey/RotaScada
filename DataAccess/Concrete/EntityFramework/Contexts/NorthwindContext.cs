@@ -24,11 +24,19 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
             });
             base.OnConfiguring(optionsBuilder);
         }
+       // Nortwind Deneme
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
-        public DbSet<User> Users { get; set; }
-        public DbSet<Servis> Servis { get; set; }
+
+        //MalKabul 
+        public DbSet<User> Users { get; set; }  
         public DbSet<OperationClaim> OperationClaims { get; set; }
         public DbSet<UserOperationClaim> UserOperationClaims { get; set; }
+
+        public DbSet<Servis> Servisler { get; set; }
+        public DbSet<Bolum> Bolumler { get; set; }
+        public DbSet<BolumIslem> BolumIslemler { get; set; }
+        public DbSet<Malzeme> Malzemeler { get; set; }
+        public DbSet<MalzemeGrup> MalzemeGrups { get; set; }
     }
 }
