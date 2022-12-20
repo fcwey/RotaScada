@@ -12,5 +12,6 @@ namespace DataAccess.Abstract
     public interface IBolumIslemDal : IEntityRepository<BolumIslem>
     {
         List<BolumIslemDto> GetListBolumIslemDtos();
+        List<BolumIslem> GetListByBolumId(int bolumId );
     }
 }

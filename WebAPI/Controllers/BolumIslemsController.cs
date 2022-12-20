@@ -48,6 +48,17 @@ namespace WebAPI.Controllers
             return BadRequest();
 
         }
+        [HttpGet("getallbybolumid")]
+        public IActionResult GetAllByBolumId(int bolumId)
+        {
+            var result = _bolumIslemService.GetListByBolumId(bolumId);
+            if (result.IsSuccess)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest();
+
+        }
         [HttpPost("add")]
         public IActionResult Add(BolumIslem bolumIslem)
         {

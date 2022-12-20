@@ -4,6 +4,7 @@ using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,6 +47,10 @@ namespace Business.Concrete
             return new SuccessDataResult<List<Malzeme>>(_malzemeDal.GetList().ToList());
         }
 
+        public IDataResult<List<MalzemeDto>> GetListMalzemeDtos()
+        {
+            return new SuccessDataResult<List<MalzemeDto>>(_malzemeDal.GetListMalzemeDtos());
+        }
 
         public Result ServisExist(Malzeme malzeme)
         {

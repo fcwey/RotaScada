@@ -19,13 +19,34 @@ namespace DataAccess.Concrete.EntityFramework
             {
                 var result = (from BolumIslem in context.BolumIslemler
                               join bolum in context.Bolumler on BolumIslem.BolumId equals bolum.Id
-                              select new  BolumIslemDto()
+                              select new BolumIslemDto()
                               {
                                   Id = BolumIslem.Id,
-                                  BolumName=bolum.Name,
-                                  BolumIslemi= BolumIslem.BolumIslemi,
-                                  Gun=BolumIslem.Gun
-                                  
+                                  BolumName = bolum.Name,
+                                  BolumIslemi = BolumIslem.BolumIslemi,
+                                  Gun = BolumIslem.Gun
+
+                              }).ToList();
+                return result;
+
+
+            }
+        }
+
+        public List<BolumIslem> GetListByBolumId(int bolumId)
+        {
+            using (var context = new NorthwindContext())
+            {
+                var result = (from BolumIslem in context.BolumIslemler
+                              where BolumIslem.BolumId == bolumId
+                              select new BolumIslem()
+                              {
+                                  Id = BolumIslem.Id,
+                                  BolumId = BolumIslem.BolumId,
+                                  BolumIslemi = BolumIslem.BolumIslemi,
+                                  Gun = BolumIslem.Gun
+
+
                               }).ToList();
                 return result;
 

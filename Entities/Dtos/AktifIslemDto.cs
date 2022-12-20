@@ -1,0 +1,19 @@
+﻿using Core.Entities;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace Entities.Dtos
+{
+    public class AktifIslemDto:IDto
+    {
+        public int? Id { get; set; }
+        public string? BolumName { get; set; }
+        public string? IslemName { get; set; }
+        public string? Baslik { get; set; }
+        public int? Derece { get; set; }
+        public int? Dakika { get; set; }
+    }
+}

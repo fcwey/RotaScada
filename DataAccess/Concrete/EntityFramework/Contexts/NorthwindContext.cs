@@ -38,5 +38,10 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
         public DbSet<BolumIslem> BolumIslemler { get; set; }
         public DbSet<Malzeme> Malzemeler { get; set; }
         public DbSet<MalzemeGrup> MalzemeGrups { get; set; }
+        public DbSet<Islem> Islemler { get; set; }
+        public DbSet<AktifIslem> AktifIslemler { get; set; }
+        public DbSet<Fiyat> Fiyatlar { get; set; }
+        public DbSet<Musteri> Musteriler { get; set; }
+        public DbSet<MusteriFiyat> musteriFiyats { get; set; }
     }
 }

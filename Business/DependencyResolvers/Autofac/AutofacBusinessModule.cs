@@ -42,6 +42,20 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<MalzemeGrupManager>().As<IMalzemeGrupService>();
             builder.RegisterType<EfMalzemeGrupDal>().As<IMalzemeGrupDal>();
 
+            builder.RegisterType<IslemManager>().As<IIslemService>();
+            builder.RegisterType<EfIslemDal>().As<IIslemDal>();
+
+            builder.RegisterType<AktifIslemManager>().As<IAktifIslemService>();
+            builder.RegisterType<EfAktifIslemDal>().As<IAktifIslemDal>();
+
+            builder.RegisterType<FiyatManager>().As<IFiyatService>();
+            builder.RegisterType<EfFiyatDal>().As<IFiyatDal>();
+
+            builder.RegisterType<MusteriManager>().As<IMusteriService>();
+            builder.RegisterType<EfMusteriDal>().As<IMusteriDal>();
+
+            builder.RegisterType<MusteriFiyatManager>().As<IMusteriFiyatService>();
+            builder.RegisterType<EfMusteriFiyatDal>().As<IMusteriFiyatDal>();
 
             builder.RegisterType<UserManager>().As<IUserService>();
             builder.RegisterType<EfUserDal>().As<IUserDal>();

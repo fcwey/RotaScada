@@ -45,6 +45,11 @@ namespace Business.Concrete
             return new SuccessDataResult<List<BolumIslemDto>>(_bolumIslemDal.GetListBolumIslemDtos());
         }
 
+        public DataResult<List<BolumIslem>> GetListByBolumId(int bolumId)
+        {
+            return new SuccessDataResult<List<BolumIslem>>(_bolumIslemDal.GetListByBolumId(bolumId));
+        }
+        
         public Result ServisExist(BolumIslem bolumIslem)
         {
             if (_bolumIslemDal.Get(p => p.Id == bolumIslem.Id) == null)

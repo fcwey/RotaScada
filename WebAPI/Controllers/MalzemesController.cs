@@ -25,7 +25,17 @@ namespace WebAPI.Controllers
             return BadRequest();
 
         }
-   
+        [HttpGet("getallDto")]
+        public IActionResult GetListDto()
+        {
+            var result = _malzemeService.GetListMalzemeDtos();
+            if (result.IsSuccess)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest();
+
+        }
 
         [HttpGet("getbyid")]
         public IActionResult GetById(int malzemeId)

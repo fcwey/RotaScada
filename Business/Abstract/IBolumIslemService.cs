@@ -14,6 +14,8 @@ namespace Business.Abstract
         IDataResult<BolumIslem> GetById(int bolumIslemId);
         IDataResult<List<BolumIslem>> GetList();
         IDataResult<List<BolumIslemDto>> GetListBolumIslemDtos();
+        DataResult<List<BolumIslem>> GetListByBolumId(int bolumId);
+        
         Result ServisExist(BolumIslem bolumIslem);
         IResult Add(BolumIslem bolumIslem);
         IResult Delete(BolumIslem bolumIslem);

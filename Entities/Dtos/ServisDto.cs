@@ -10,6 +10,6 @@ namespace Entities.Dtos
     public class ServisDto:IDto
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
     }
 }
