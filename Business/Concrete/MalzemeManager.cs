@@ -42,6 +42,11 @@ namespace Business.Concrete
             return new SuccessDataResult<Malzeme>(_malzemeDal.Get(p => p.Id == malzemeId));
         }
 
+        public IDataResult<MalzemeDto> GetDtoById(int malzemeId)
+        {
+            return new SuccessDataResult<MalzemeDto>(_malzemeDal.GetDtoById(malzemeId));
+        }
+
         public IDataResult<List<Malzeme>> GetList()
         {
             return new SuccessDataResult<List<Malzeme>>(_malzemeDal.GetList().ToList());

@@ -3,6 +3,7 @@ using Business.Constants;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -46,5 +47,12 @@ namespace Business.Concrete
             _musteriFiyatDal.Update(musteriFiyat);
             return new SuccessResult(Messages.ServisUpdated);
         }
+
+        public IDataResult<List<MusteriFiyatDto>> GetListDto(int musteriId)
+        {
+            return new SuccessDataResult<List<MusteriFiyatDto>>(_musteriFiyatDal.GetListMusteriFiyatDtos(musteriId));
+        }
+
+   
     }
 }

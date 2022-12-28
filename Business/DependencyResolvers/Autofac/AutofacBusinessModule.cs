@@ -57,6 +57,18 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<MusteriFiyatManager>().As<IMusteriFiyatService>();
             builder.RegisterType<EfMusteriFiyatDal>().As<IMusteriFiyatDal>();
 
+            builder.RegisterType<MalGirisKayitManager>().As<IMalGirisKayitService>();
+            builder.RegisterType<EfMalGirisKayitDal>().As<IMalGirisKayitDal>();
+
+            builder.RegisterType<MalGirisMalzemeManager>().As<IMalGirisMalzemeService>();
+            builder.RegisterType<EfMalGirisMalzemeDal>().As<IMalGirisMalzemeDal>();
+
+            builder.RegisterType<MalGirisResimManager>().As<IMalGirisResimService>();
+            builder.RegisterType<EfMalGirisResimDal>().As<IMalGirisResimDal>();
+
+            builder.RegisterType<MalGirisIslemManager>().As<IMalGirisIslemService>();
+            builder.RegisterType<EfMalGirisIslemDal>().As<IMalGirisIslemDal>();
+
             builder.RegisterType<UserManager>().As<IUserService>();
             builder.RegisterType<EfUserDal>().As<IUserDal>();
 

@@ -13,6 +13,27 @@ namespace DataAccess.Concrete.EntityFramework
 {
     public class EfMalzemeDal : EfEntityRepositoryBase<Malzeme, Contexts.NorthwindContext>, IMalzemeDal
     {
+        public MalzemeDto GetDtoById(int malzemeId)
+        {
+            using (var context = new NorthwindContext())
+            {
+                var result = (from Malzeme in context.Malzemeler
+                              join MalzemeGrup in context.MalzemeGrups on Malzeme.MGrupId equals MalzemeGrup.Id
+                              where Malzeme.Id == malzemeId
+                              select new MalzemeDto()
+                              {
+                                  Id = Malzeme.Id,
+                                  MGrupName = MalzemeGrup.GrupName,
+                                  MalzemeName = Malzeme.MalzemeName,
+                                  MaxSertlik = Malzeme.MaxSertlik
+
+                              }).First();
+                return result;
+
+
+            }
+        }
+
         public List<MalzemeDto> GetListMalzemeDtos()
         {
 
@@ -32,6 +53,7 @@ namespace DataAccess.Concrete.EntityFramework
 
 
             }
+            
         }
     }
 }

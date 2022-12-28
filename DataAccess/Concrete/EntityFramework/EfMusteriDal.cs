@@ -20,14 +20,14 @@ namespace DataAccess.Concrete.EntityFramework
             using (var context = new NorthwindContext())
             {
                 var result = (from musteri in context.Musteriler
-                              orderby musteri.FirmaAd
                               select new MusteriDto()
                               {
                                   Id = musteri.Id,
                                   FirmaAd = musteri.FirmaAd,
                                   Adres=musteri.Adres,
                                   Telefon=musteri.Telefon,
-                                  Yetkili=musteri.Yetkili,
+                                  Yetkili=musteri.Yetkili
+                                  
                               }).ToList();
                 return result;
 

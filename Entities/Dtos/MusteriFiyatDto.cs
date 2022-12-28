@@ -13,7 +13,7 @@ namespace Entities.Dtos
         public string? BolumName { get; set; }
         public string? BolumIslemName { get; set; }
         public string? MGrupName { get; set; }
-        public double BirimFiyati { get; set; }
-        public double MusteriFiyati { get; set; }    
+        public double? BirimFiyati { get; set; }
+        public double? MusteriFiyati { get; set; }    
     }
 }

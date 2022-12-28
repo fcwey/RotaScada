@@ -48,6 +48,17 @@ namespace WebAPI.Controllers
             return BadRequest();
 
         }
+        [HttpGet("getdtobyid")]
+        public IActionResult GetDtoById(int malzemeId)
+        {
+            var result = _malzemeService.GetDtoById(malzemeId);
+            if (result.IsSuccess)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest();
+
+        }
         [HttpPost("add")]
         public IActionResult Add(Malzeme malzeme)
         {

@@ -25,7 +25,17 @@ namespace WebAPI.Controllers
             return BadRequest();
 
         }
-    
+        [HttpGet("getalldto")] //müşteri numarasına göre fiyatlatını getirme
+        public IActionResult GetListDto(int musteriId)
+        {
+            var result = _musteriFiyatService.GetListDto(musteriId);
+            if (result.IsSuccess)
+            {
+                return Ok(result.Data);
+            }
+            return BadRequest();
+
+        }
         [HttpGet("getbyid")]
         public IActionResult GetById(int musteriFiyatId)
         {
