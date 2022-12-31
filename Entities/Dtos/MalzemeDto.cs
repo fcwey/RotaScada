@@ -12,6 +12,6 @@ namespace Entities.Dtos
         public int Id { get; set; }
         public string? MGrupName { get; set; }
         public string? MalzemeName { get; set; }
-        public string? MaxSertlik { get; set; }
+        public string MaxSertlik { get; set; }
     }
 }

@@ -1,0 +1,84 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net6.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <UseWPF>true</UseWPF>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Resources\**" />
+    <EmbeddedResource Remove="Resources\**" />
+    <None Remove="Resources\**" />
+    <Page Remove="Resources\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="Assets\close.png" />
+    <None Remove="Assets\close_off.png" />
+    <None Remove="Assets\img_about.png" />
+    <None Remove="Assets\img_acoustic.png" />
+    <None Remove="Assets\select.png" />
+    <None Remove="img_about.png" />
+    <None Remove="img_acoustic.png" />
+    <None Remove="img_album.png" />
+    <None Remove="img_arrow.png" />
+    <None Remove="img_exit.png" />
+    <None Remove="img_folder.png" />
+    <None Remove="img_history.png" />
+    <None Remove="img_home.png" />
+    <None Remove="img_input.png" />
+    <None Remove="img_metal.png" />
+    <None Remove="img_movies.png" />
+    <None Remove="img_music.png" />
+    <None Remove="img_rock.png" />
+    <None Remove="img_search.png" />
+    <None Remove="img_setting.png" />
+    <None Remove="max_def.png" />
+    <None Remove="max_mo.png" />
+    <None Remove="shutdown_def.png" />
+    <None Remove="shutdown_mo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\close.png" />
+    <Resource Include="Assets\close_off.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\img_about.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Business\Business.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Resource Include="Assets\img_acoustic.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Resource>
+    <Resource Include="Assets\select.png" />
+    <Resource Include="img_about.png" />
+    <Resource Include="img_album.png" />
+    <Resource Include="img_arrow.png" />
+    <Resource Include="img_exit.png" />
+    <Resource Include="img_history.png" />
+    <Resource Include="img_input.png" />
+    <Resource Include="img_search.png" />
+    <Resource Include="img_setting.png" />
+    <Resource Include="max_def.png" />
+    <Resource Include="max_mo.png" />
+    <Resource Include="shutdown_def.png" />
+    <Resource Include="shutdown_mo.png" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Assets\img_exit.png">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+      <Generator>assets</Generator>
+    </None>
+  </ItemGroup>
+
+</Project>
