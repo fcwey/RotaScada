@@ -9,11 +9,9 @@ namespace Entities.Dtos
 {
     public class AktifIslemDto:IDto
     {
-        public int? Id { get; set; }
+        public int Id { get; set; }
         public string? BolumName { get; set; }
         public string? IslemName { get; set; }
-        public string? Baslik { get; set; }
-        public int? Derece { get; set; }
-        public int? Dakika { get; set; }
+        public string? FurnaceName { get; set; }
     }
 }

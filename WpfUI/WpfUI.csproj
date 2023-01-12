@@ -42,6 +42,14 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Page Remove="Windows\Win_Page_MalKabul.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Windows\Win_Page_MalKabul.xaml" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Resource Include="Assets\close.png" />
     <Resource Include="Assets\close_off.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>

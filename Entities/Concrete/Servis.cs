@@ -10,10 +10,10 @@ namespace Entities.Concrete
     public class Servis: IEntity
     {
         public int Id { get; set; }
-        public string Name { get; set; }
+        public string? Name { get; set; }
         public int Top { get; set; }
         public int Left { get; set; }
-        public byte[] Resim { get; set; }
+        public byte[]? Resim { get; set; }
     }
 }
 //CREATE TABLE[dbo].[Servis] (

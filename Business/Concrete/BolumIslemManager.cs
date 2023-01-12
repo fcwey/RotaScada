@@ -64,5 +64,6 @@ namespace Business.Concrete
             _bolumIslemDal.Update(bolumIslem);
             return new SuccessResult(Messages.ServisUpdated);
         }
+
     }
 }

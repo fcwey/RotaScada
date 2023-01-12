@@ -10,8 +10,8 @@ namespace Entities.Dtos
     public class BolumIslemDto: IDto
     {
         public int Id { get; set; }
-        public string BolumName { get; set; }
-        public string BolumIslemi { get; set; }
+        public string? BolumName { get; set; }
+        public string? BolumIslemi { get; set; }
         public int Gun { get; set; }
 
     }

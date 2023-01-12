@@ -28,7 +28,8 @@ namespace WpfUI
 
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
         {
-            Close();
+            System.Windows.Application.Current.Shutdown();
+            //Close();
         }
 
         private void MaxBtn_Click(object sender, RoutedEventArgs e)
@@ -66,6 +67,49 @@ namespace WpfUI
         {
             Win_Tnm_MalzemeTnm WinMgrup = new Win_Tnm_MalzemeTnm();
             WinMgrup.ShowDialog();
+        }
+
+        private void islemaAdd_Click(object sender, RoutedEventArgs e)
+        {
+            Win_Tnm_Islem Winislem = new Win_Tnm_Islem();
+            Winislem.ShowDialog();
+        }
+
+        private void bolumislemaAdd_Click(object sender, RoutedEventArgs e)
+        {
+            Win_Tnm_BolumIslem WinBolumislem= new Win_Tnm_BolumIslem();
+            WinBolumislem.ShowDialog();
+
+        }
+
+        private void servis_Click(object sender, RoutedEventArgs e)
+        {
+            Win_Tnm_Servis WinServis = new Win_Tnm_Servis();
+            WinServis.ShowDialog();
+        }
+
+        private void musteri_Click(object sender, RoutedEventArgs e)
+        {
+            Win_Tnm_Musteri WinMusteri = new Win_Tnm_Musteri();
+            WinMusteri.ShowDialog();
+        }
+
+        private void FiyatTanim_Click(object sender, RoutedEventArgs e)
+        {
+            Win_Tnm_Fiyat WinFiyat = new Win_Tnm_Fiyat();
+            WinFiyat.ShowDialog();
+        }
+
+        private void furnace_Click(object sender, RoutedEventArgs e)
+        {
+            Win_Tnm_AktifIslemler WinFurnace = new Win_Tnm_AktifIslemler();
+            WinFurnace.ShowDialog();
+        }
+
+        private void malKabul_Click(object sender, RoutedEventArgs e)
+        {
+            Win_Page_MalKabul WinFurnace = new Win_Page_MalKabul();
+            WinFurnace.ShowDialog();
         }
     }
 }

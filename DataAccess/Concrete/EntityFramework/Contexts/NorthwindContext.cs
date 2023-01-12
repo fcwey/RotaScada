@@ -43,5 +43,6 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
         public DbSet<Fiyat> Fiyatlar { get; set; }
         public DbSet<Musteri> Musteriler { get; set; }
         public DbSet<MusteriFiyat> musteriFiyats { get; set; }
+        public DbSet<Furnace> Furnaces { get; set; }
     }
 }

@@ -69,6 +69,9 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<MalGirisIslemManager>().As<IMalGirisIslemService>();
             builder.RegisterType<EfMalGirisIslemDal>().As<IMalGirisIslemDal>();
 
+            builder.RegisterType<FurnaceManager>().As<IFurnaceService>();
+            builder.RegisterType<EfFurnaceDal>().As<IFurnaceDal>();
+
             builder.RegisterType<UserManager>().As<IUserService>();
             builder.RegisterType<EfUserDal>().As<IUserDal>();
 

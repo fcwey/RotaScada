@@ -29,7 +29,7 @@ namespace WpfUI.Windows
     /// </summary>
     public partial class WindowMGrup : Window
     {
-        private Timer m_toolTipClosingTimer;
+      
         public WindowMGrup()
         {
             InitializeComponent();
@@ -37,6 +37,7 @@ namespace WpfUI.Windows
             _malzemeGrupService = new MalzemeGrupManager(new EfMalzemeGrupDal());
             LoadMGrup();
         }
+        private Timer m_toolTipClosingTimer;
         readonly IMalzemeGrupService _malzemeGrupService;
         MalzemeGrup _selectedMGrup;
         List<MalzemeGrup> mGrupList;

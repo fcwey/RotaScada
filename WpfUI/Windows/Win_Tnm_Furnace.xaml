@@ -1,0 +1,294 @@
+﻿<Window x:Class="WpfUI.Windows.Win_Tnm_Furnace"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:WpfUI.Windows"
+        mc:Ignorable="d"
+        Title="WindowMGrup" Height="550" Width="450" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="Transparent" WindowStyle="None">
+    <Grid MouseDown="Grid_MouseDown">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="40">
+
+            </RowDefinition >
+            <RowDefinition Height="225">
+
+            </RowDefinition>
+            <RowDefinition>
+
+            </RowDefinition>
+            <RowDefinition Height="42">
+
+
+            </RowDefinition>
+        </Grid.RowDefinitions>
+        <Border Background="DodgerBlue"  Margin="0,0,0,0" Grid.Row="0" CornerRadius="0,14,0,0">
+            <Grid>
+
+
+
+                <StackPanel  HorizontalAlignment="Left" Margin="0,0,0,0" Orientation="Horizontal">
+                    <Viewbox Width="22" Height="20" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform">
+                        <Canvas Width="13.229166" Height="13.229167">
+                            <Canvas.RenderTransform>
+                                <TranslateTransform X="0" Y="0"/>
+                            </Canvas.RenderTransform>
+                            <Canvas.Resources/>
+                            <!--Unknown tag: sodipodi:namedview-->
+                            <!--Unknown tag: metadata-->
+
+                        </Canvas>
+                    </Viewbox>
+                    <Label FontSize="19"  Foreground="White" Content="Fırın Ekle" FontWeight="Light"></Label>
+
+                </StackPanel>
+
+                <Button Width="25" Height="25" x:Name="CloseBtn"
+                    Style="{StaticResource ExitBtnStyle}" Margin="0,8,8,0" RenderTransformOrigin="0.5,0.5" Click="CloseBtn_Click"  >
+
+                </Button>
+            </Grid>
+
+        </Border>
+        <!--Butonlar-textbox  vs-->
+        <Border Background="White" Margin="0,0,0,0" Grid.Row="1">
+            <StackPanel HorizontalAlignment="Center" Orientation="Vertical" Margin="0,0,0,0">
+                <!--Malzeme Grup Textbox ve Label-->
+                <StackPanel Orientation="Horizontal" Margin="20,15,0,10">
+                    <Label FontSize="13" Content="   Bölüm Adı :"></Label>
+                    <ComboBox FontSize="15"  Foreground="Red" Name="cbxBolum" Width="250"></ComboBox>
+
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="20,15,0,10">
+                    <Label FontSize="13" Content="       Fırın Adı :"></Label>
+                    <TextBox Name="tbxFurnaceName" FontSize="15" Width="250"></TextBox>
+                </StackPanel>
+                <StackPanel Orientation="Horizontal" Margin="20,15,0,10">
+                    <Label FontSize="13" Content="Max. Sıcaklık :"></Label>
+                    <TextBox Name="tbxMaxTemp" FontSize="15" Width="250"></TextBox>
+                </StackPanel>
+
+
+
+                <!--Yeni Kaydet Sil Kapat Butonları-->
+                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                    <Button Name="btnYeni"   Margin="5,0,0,0" Grid.Row="1" Height="40" Width="85" Click="btnYeni_Click">
+                        <Button.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="7,0,0,7"/>
+                            </Style>
+                        </Button.Resources>
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Margin="-5,0,0,0" Width="30" Height="30" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform">
+                                <Canvas Width="13.229166" Height="13.229167">
+                                    <Canvas.RenderTransform>
+                                        <TranslateTransform X="0" Y="0"/>
+                                    </Canvas.RenderTransform>
+                                    <Canvas.Resources/>
+                                    <!--Unknown tag: sodipodi:namedview-->
+                                    <!--Unknown tag: metadata-->
+                                    <Canvas >
+                                        <Polygon xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Points="321.055,82.36 327.055,82.36 327.055,78.36 321.055,78.36 321.055,72.36 317.055,72.36 317.055,78.36 311.055,78.36 311.055,82.36 317.055,82.36 317.055,88.36 321.055,88.36 " Name="polygon260" FillRule="NonZero" Fill="#FF07A000">
+                                            <Polygon.RenderTransform>
+                                                <MatrixTransform Matrix="0.54511253 0 0 0.54511253 -167.18819 -37.308778"/>
+                                            </Polygon.RenderTransform>
+                                        </Polygon>
+                                    </Canvas>
+                                </Canvas>
+                            </Viewbox>
+                            <Label FontSize="15" VerticalAlignment="Center"  Padding="0" Content="Yeni"></Label>
+                        </StackPanel>
+
+
+                    </Button>
+                    <Button  Name="btnKaydet"  Margin="20,0,0,0" Grid.Row="1" Height="40" Width="95" Click="btnKaydet_Click">
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Margin="-3,0,0,0" Width="30" Height="30" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform">
+                                <Canvas Width="13.229166" Height="13.229167">
+                                    <Canvas.RenderTransform>
+                                        <TranslateTransform X="0" Y="0"/>
+                                    </Canvas.RenderTransform>
+                                    <Canvas.Resources/>
+                                    <!--Unknown tag: sodipodi:namedview-->
+                                    <!--Unknown tag: metadata-->
+                                    <Canvas >
+                                        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path84" Fill="#FF007ACC" StrokeThickness="0.585876">
+                                            <Path.Data>
+                                                <PathGeometry Figures="M 10.185684 4.6457637 8.3343142 2.8705576 9.1193887 2.1206354 10.970759 3.9134178 Z M 5.0944164 9.7018786 3.3719392 7.9794014 7.7660137 3.4740104 9.6701128 5.1437587 Z m -2.32593 0.6034534 V 8.5652781 l 1.7400535 1.7400539 z" FillRule="EvenOdd"/>
+                                            </Path.Data>
+                                        </Path>
+                                    </Canvas>
+                                </Canvas>
+                            </Viewbox>
+                            <Label x:Name="LabelKaydet" FontSize="15" VerticalAlignment="Center" Padding="0" Content="Kaydet"></Label>
+                        </StackPanel>
+                    </Button>
+                    <Button Name="btnSil"  Margin="20,0,0,0" Grid.Row="1" Height="40" Width="95" Click="btnSil_Click" >
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Margin="-3,0,0,0" Width="30" Height="30" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform">
+                                <Canvas Width="13.229166" Height="13.229167">
+                                    <Canvas.RenderTransform>
+                                        <TranslateTransform X="0" Y="0"/>
+                                    </Canvas.RenderTransform>
+                                    <Canvas.Resources/>
+                                    <!--Unknown tag: sodipodi:namedview-->
+                                    <!--Unknown tag: metadata-->
+                                    <Canvas Name="layerl1">
+                                        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path206" Fill="#FFD8210D" StrokeThickness="0.571688">
+                                            <Path.Data>
+                                                <PathGeometry Figures="M 8.0319945 2.6127604 V 2.0410715 H 5.1735492 V 2.6127604 H 2.3151042 V 3.7561385 H 10.890439 V 2.6127604 Z m -5.1452014 1.715067 v 5.1452005 c 0 0.9490041 0.7660633 1.7150671 1.715067 1.7150671 h 4.0018234 c 0.949003 0 1.7150665 -0.766063 1.7150665 -1.7150671 V 4.3278274 H 9.1753725 v 5.1452005 c 0 0.31443 -0.25726 0.5716901 -0.571689 0.5716901 H 4.6018601 c -0.3144289 0 -0.5716889 -0.2572601 -0.5716889 -0.5716901 V 4.3278274 Z m 1.715067 0.5716891 V 9.4730279 H 5.1735492 V 4.8995165 Z m 1.143378 0 v 4.5735114 h 0.571689 V 4.8995165 Z m 1.1433781 0 V 9.4730279 H 7.4603055 V 4.8995165 Z m 1.1433783 0 v 4.5735114 h 0.571689 V 4.8995165 Z" FillRule="EvenOdd"/>
+                                            </Path.Data>
+                                        </Path>
+                                    </Canvas>
+                                </Canvas>
+                            </Viewbox>
+                            <Label FontSize="15" VerticalAlignment="Center" Padding="0" Content=" Sil"></Label>
+                        </StackPanel>
+                    </Button>
+                    <Button Name="btnExit" BorderBrush="#EF9999" Margin="20,0,0,0" Grid.Row="1" Height="40" Width="85"  Background="#E47474" Click="btnExit_Click">
+                        <Button.Resources>
+                            <Style TargetType="{x:Type Border}">
+                                <Setter Property="CornerRadius" Value="0,7,7,0"/>
+                            </Style>
+                        </Button.Resources>
+                        <StackPanel Orientation="Horizontal">
+                            <Viewbox Width="25" Height="25" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform">
+                                <Canvas Width="13.229166" Height="13.229167">
+                                    <Canvas.RenderTransform>
+                                        <TranslateTransform X="0" Y="0"/>
+                                    </Canvas.RenderTransform>
+                                    <Canvas.Resources/>
+                                    <!--Unknown tag: sodipodi:namedview-->
+                                    <!--Unknown tag: metadata-->
+                                    <Canvas >
+                                        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path52" Fill="White" StrokeThickness="0.61776">
+                                            <Path.Data>
+                                                <PathGeometry Figures="M 7.3663172 6.4158114 V 2.0914853 h -1.235523 v 4.3243261 z m -4.9420881 0.617761 c 0 2.3907347 1.9335911 4.3243256 4.3243261 4.3243256 2.390735 0 4.3243268 -1.9335909 4.3243268 -4.3243256 0 -1.7235528 -1.013128 -3.2123565 -2.4710448 -3.9104263 v 1.4393827 c 0.747491 0.5621625 1.235523 1.4579157 1.235523 2.4710436 0 1.7050197 -1.383785 3.0888046 -3.088805 3.0888046 -1.70502 0 -3.0888045 -1.3837849 -3.0888045 -3.0888046 0 -1.0131279 0.4880315 -1.9088811 1.2355215 -2.4710436 V 3.1231461 C 3.4373568 3.8212159 2.4242291 5.3100196 2.4242291 7.0335724 Z" FillRule="EvenOdd"/>
+                                            </Path.Data>
+                                        </Path>
+                                    </Canvas>
+                                </Canvas>
+                            </Viewbox>
+                            <Label FontSize="15" VerticalAlignment="Center" Padding="0" Content="Çıkış"></Label>
+                        </StackPanel>
+
+                    </Button>
+
+                </StackPanel>
+            </StackPanel>
+        </Border>
+        <!--Listview Sayfası-->
+
+        <ListView Grid.Row="2" FontSize="15" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="0,0,0,0"  AlternationCount="2" Name="lvMGrup" Grid.ColumnSpan="7" SelectionChanged="lvMGrup_SelectionChanged">
+            <ListView.View>
+                <GridView  >
+                    <!--<GridViewColumn Width="Auto"      DisplayMemberBinding="{Binding Id}">
+                        <GridViewColumn.Header>
+                            <Label Content="No" FontWeight="Bold"></Label>
+                        </GridViewColumn.Header>
+                    </GridViewColumn>-->
+                    <GridViewColumn Width="120"  DisplayMemberBinding="{Binding BolumAdi}">
+                        <GridViewColumn.Header>
+                            <Label Content="Bölüm Adı" FontWeight="Bold"></Label>
+                        </GridViewColumn.Header>
+                    </GridViewColumn>
+                    <GridViewColumn Width="150"  DisplayMemberBinding="{Binding Name}">
+                        <GridViewColumn.Header>
+                            <Label Content="Fırın İşlem Adı" FontWeight="Bold"></Label>
+                        </GridViewColumn.Header>
+                    </GridViewColumn>
+                    <GridViewColumn Width="200"  DisplayMemberBinding="{Binding Derece}">
+                        <GridViewColumn.Header>
+                            <Label Content="Maksimum Sıcaklık" FontWeight="Bold"></Label>
+                        </GridViewColumn.Header>
+                    </GridViewColumn>
+
+                </GridView>
+            </ListView.View>
+        </ListView>
+
+        <!--Alt Bilgi Border-->
+        <Border Grid.Row="3" Background="#FF007ACC" Height="40" VerticalAlignment="Center" Grid.ColumnSpan="4" CornerRadius="0,0,0,10">
+            <Grid>
+                <StackPanel  HorizontalAlignment="Left" Margin="10,0,0,0" Orientation="Horizontal">
+                    <Viewbox x:Name="Message" Width="22" Height="20" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform" VerticalAlignment="Top">
+                        <Canvas Width="13.229166" Height="13.229167">
+                            <Canvas.RenderTransform>
+                                <TranslateTransform X="0" Y="0"/>
+                            </Canvas.RenderTransform>
+                            <Canvas.Resources/>
+
+                            <!--Unknown tag: sodipodi:namedview-->
+                            <!--Unknown tag: metadata-->
+
+                        </Canvas>
+                    </Viewbox>
+                    <!--<Label VerticalAlignment="Center" HorizontalAlignment="Right" x:Name="Message" FontSize="10" Foreground="White" Content="v1.0" FontWeight="Light">
+                      
+                        
+                    </Label>-->
+
+
+                </StackPanel>
+                <StackPanel Orientation="Vertical">
+
+                </StackPanel>
+                <StackPanel  HorizontalAlignment="Right" Margin="0,0,10,0"  Orientation="Horizontal">
+                    <Viewbox Width="20" Height="20" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform">
+                        <Canvas Width="13" Height="13">
+
+                            <Canvas.RenderTransform>
+                                <TranslateTransform X="0" Y="0"/>
+                            </Canvas.RenderTransform>
+                            <Canvas.Resources/>
+                            <!--Unknown tag: sodipodi:namedview-->
+                            <!--Unknown tag: metadata-->
+                            <Canvas >
+                                <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path16" Fill="YellowGreen" StrokeThickness="0.4" HorizontalAlignment="Center" VerticalAlignment="Center" Canvas.Top="-4" Canvas.Left="0">
+                                    <Path.Data>
+                                        <PathGeometry Figures="M 10.021094 8.6137231 C 9.4724137 8.3393833 8.6773887 7.678728 7.4904487 7.4603759 c 0.291136 -0.3527226 0.526285 -0.9014022 0.772631 -1.5396622 0.123172 -0.3863153 0.100777 -0.7054454 0.100777 -1.1533472 0 -0.3415253 0.06719 -0.8678098 -0.02239 -1.1757422 C 8.0839187 2.589444 7.4232641 2.3151042 6.6506335 2.3151042 c -0.7838282 0 -1.4444833 0.2743398 -1.7020268 1.2765201 -0.078383 0.3079324 -0.022394 0.8454146 -0.022394 1.1757422 0 0.4479018 -0.022394 0.7670319 0.1231722 1.1533472 0.2351493 0.63826 0.4591002 1.1981372 0.7614339 1.5396622 C 4.6350748 7.6899257 3.8288516 8.3505807 3.302567 8.6137231 2.1828125 9.1400075 2.1828125 9.7222805 2.1828125 9.7222805 v 0.22395 c 0 0.3807165 0.4143092 0.7670315 0.8174208 0.7670315 H 10.31223 c 0.515087 0 0.828618 -0.419908 0.828618 -0.8006235 v -0.190358 c 0 0 -0.01119 -0.582272 -1.119754 -1.1085574 z" FillRule="EvenOdd"/>
+                                    </Path.Data>
+                                </Path>
+                            </Canvas>
+                        </Canvas>
+                    </Viewbox>
+                    <Label FontSize="12" Foreground="White" Content="Kullanıcı Adı" FontWeight="Light"></Label>
+                </StackPanel>
+            </Grid>
+
+        </Border>
+
+        <!--<Border Background="CadetBlue" Grid.Row="4">
+            <StatusBar >
+                <StatusBarItem HorizontalAlignment="Left" Width="179">
+                    <TextBlock x:Name="m_statusMessage" Text="TextBlock With ToolTip" ToolTipService.ShowDuration="30000">
+                        <TextBlock.ToolTip>
+                            <ToolTip x:Name="m_toolTip" Placement="Left">
+                                <TextBlock>
+                                ToolTip ToolTipToolTipToolTipToolTipToo lTipToolTipToolTipT oolTipToolTipT
+                                <LineBreak />
+                                oolTipToolTi pToolTipToo lTipToolTipToolTipToolTipToolTipTo olTipToolTipToolTipTool
+                                <LineBreak />
+                                TipToo lTipToolTipToolTipToo lTipToolTipTo olTipToolTip
+                                </TextBlock>
+                            </ToolTip>
+                        </TextBlock.ToolTip>
+                </TextBlock>
+                </StatusBarItem>
+            </StatusBar>
+        </Border>-->
+        <Grid>
+            <Popup x:Name="popup_uc"
+                   AllowsTransparency="True"
+                   HorizontalOffset="10"
+                   VerticalOffset="10">
+                <Grid>
+                    <local:PopupUC x:Name="Header" Foreground="#E0FFFF"/>
+                </Grid>
+            </Popup>
+        </Grid>
+    </Grid>
+</Window>

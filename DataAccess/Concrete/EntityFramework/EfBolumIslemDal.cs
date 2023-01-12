@@ -42,9 +42,9 @@ namespace DataAccess.Concrete.EntityFramework
                               select new BolumIslem()
                               {
                                   Id = BolumIslem.Id,
-                                  BolumId = BolumIslem.BolumId,
+                                  BolumId= BolumIslem.BolumId,
                                   BolumIslemi = BolumIslem.BolumIslemi,
-                                  Gun = BolumIslem.Gun
+                                  Gun= BolumIslem.Gun
 
 
                               }).ToList();

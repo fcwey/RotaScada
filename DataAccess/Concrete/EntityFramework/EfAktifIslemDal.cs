@@ -21,15 +21,14 @@ namespace DataAccess.Concrete.EntityFramework
                 var result = (from aktifIslem in context.AktifIslemler
                               join bolum in context.Bolumler on aktifIslem.BolumId equals bolum.Id
                               join islem in context.Islemler on aktifIslem.IslemId equals islem.Id
+                              join furnace in context.Furnaces on aktifIslem.FurnaceId equals furnace.Id
                               orderby aktifIslem.IslemId
                               select new AktifIslemDto()
                               {
                                   Id= aktifIslem.Id,
                                   BolumName=bolum.Name,
                                   IslemName=islem.Name,
-                                  Baslik=aktifIslem.Baslik,
-                                  Dakika=aktifIslem.Dakika,
-                                  Derece=aktifIslem.Derece
+                                  FurnaceName=furnace.Name
                               }).ToList();
                 return result;
 

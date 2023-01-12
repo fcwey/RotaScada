@@ -10,13 +10,13 @@ namespace Entities.Concrete
     public class Musteri:IEntity
     {
         public int Id { get; set; }
-        public string FirmaAd { get; set; }
-        public string Yetkili { get; set; }
-        public string Telefon { get; set; }
-        public string Fax { get; set; }
-        public string Email { get; set; }
-        public string Web { get; set; }
-        public string Adres { get; set; }
+        public string? FirmaAd { get; set; }
+        public string? Yetkili { get; set; }
+        public string? Telefon { get; set; }
+        public string? Fax { get; set; }
+        public string? Email { get; set; }
+        public string? Web { get; set; }
+        public string? Adres { get; set; }
         public int ServisId { get; set; }
         public int Nakliye { get; set; }
         public int OdemeTuru { get; set; }

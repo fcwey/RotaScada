@@ -96,7 +96,8 @@
                     </MenuItem.Icon>
 
                     <MenuItem Header="Mal Kabul"
-                              Template="{StaticResource Item_Template}">
+                              Name="malKabul"
+                              Template="{StaticResource Item_Template}" Click="malKabul_Click">
 
                         <MenuItem.Icon>
 
@@ -136,7 +137,8 @@
                     <!--// Tanımlar Submenu - Müşteri //-->
 
                     <MenuItem Header="Müşteri"
-                              Template="{StaticResource Item_Template}">
+                              Name="musteri"
+                              Template="{StaticResource Item_Template}" Click="musteri_Click">
 
                         <MenuItem.Icon>
 
@@ -146,9 +148,10 @@
                         </MenuItem.Icon>
 
                     </MenuItem>
-                    <!--// Tanımlar Submenu - Servis //-->
+                    <!--// Tanımlar Submenu - Fiyat //-->
                     <MenuItem Header="Fiyat"
-                              Template="{StaticResource Item_Template}">
+                              Template="{StaticResource Item_Template}"
+                              Name="FiyatTanim" Click="FiyatTanim_Click">
 
                         <MenuItem.Icon>
 
@@ -161,7 +164,8 @@
                     <!--// Tanımlar Submenu - Servis //-->
 
                     <MenuItem Header="Servis"
-                              Template="{StaticResource Item_Template}">
+                              Name="servis"
+                              Template="{StaticResource Item_Template}" Click="servis_Click">
 
                         <MenuItem.Icon>
 
@@ -232,7 +236,8 @@
                         </MenuItem.Icon>
                         <!--// Tanımlar .. Fırınlar Submenu - İşlem Tanımı //-->
                         <MenuItem Header="İşlem Tanımı"
-                                  Template="{StaticResource Item_Template}">
+                                  Name="islemaAdd"
+                                  Template="{StaticResource Item_Template}" Click="islemaAdd_Click">
 
                             <MenuItem.Icon>
 
@@ -243,7 +248,8 @@
                         </MenuItem>
                         <!--// Tanımlar .. Fırınlar Submenu - Bölüm Tanımı //-->
                         <MenuItem Header="Bölüm Tanımı"
-                                  Template="{StaticResource Item_Template}">
+                                  Name="bolumislemaAdd"
+                                  Template="{StaticResource Item_Template}" Click="bolumislemaAdd_Click">
 
                             <MenuItem.Icon>
 
@@ -254,7 +260,8 @@
                         </MenuItem>
                         <!--// Tanımlar .. Fırınlar Submenu - Bölüm Tanımı //-->
                         <MenuItem Header="Fırın Tanımı"
-                                  Template="{StaticResource Item_Template}">
+                                  Name="furnace"
+                                  Template="{StaticResource Item_Template}" Click="furnace_Click">
 
                             <MenuItem.Icon>
 
