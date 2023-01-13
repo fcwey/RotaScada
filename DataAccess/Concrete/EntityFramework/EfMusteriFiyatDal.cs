@@ -19,7 +19,7 @@ namespace DataAccess.Concrete.EntityFramework
             using (var context = new NorthwindContext())
             {
                 var result = (from fiyat in context.Fiyatlar
-                              from mfiyat in context.musteriFiyats.Where(b => b.FiyatId == fiyat.Id).DefaultIfEmpty()
+                              from mfiyat in context.MusteriFiyats.Where(b => b.FiyatId == fiyat.Id).DefaultIfEmpty()
                                                                   .Where(b => b.MusteriId == musteriId).DefaultIfEmpty()
                               join bolumislem in context.BolumIslemler on fiyat.BolumIslemId equals bolumislem.Id
                               join bolum in context.Bolumler on bolumislem.BolumId equals bolum.Id

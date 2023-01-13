@@ -202,6 +202,7 @@ namespace WpfUI.Windows
                 fiyat.MGrupId = _selectedMGrup.Id;
                 fiyat.BolumIslemId = (int)cbxBolumIslem.SelectedValue;
                 var result = _fiyatService.Add(fiyat);
+                CommandMessage(result.IsSuccess, result.Message);
                 if (result.IsSuccess)
                 {
                     LoadIslem();
@@ -259,57 +260,57 @@ namespace WpfUI.Windows
         }
         private void Vacum_ElementClick(object sender, RoutedEventArgs e)
         {
-            if (!vacum.IsActive)
-            {
-                vacum.IsActive = true;
-                tuz.IsActive = false;
-                ath.IsActive = false;
-                ind.IsActive = false;
-                lvMGrup.Items.Filter = VacumFilter;
-                CbxByBolumId(1);
-                ClearField();
-            }
+            //if (!vacum.IsActive)
+            //{
+            //    vacum.IsActive = true;
+            //    tuz.IsActive = false;
+            //    ath.IsActive = false;
+            //    ind.IsActive = false;
+            //    lvMGrup.Items.Filter = VacumFilter;
+            //    CbxByBolumId(1);
+            //    ClearField();
+            //}
         }
 
         private void Tuz_ElementClick(object sender, RoutedEventArgs e)
         {
-            if (!tuz.IsActive)
-            {
-                vacum.IsActive = false;
-                tuz.IsActive = true;
-                ath.IsActive = false;
-                ind.IsActive = false;
-                lvMGrup.Items.Filter = TuzFilter;
-                CbxByBolumId(2);
-                ClearField();
+            //if (!tuz.IsActive)
+            //{
+            //    vacum.IsActive = false;
+            //    tuz.IsActive = true;
+            //    ath.IsActive = false;
+            //    ind.IsActive = false;
+            //    lvMGrup.Items.Filter = TuzFilter;
+            //    CbxByBolumId(2);
+            //    ClearField();
 
-            }
+            //}
         }
         private void Ind_ElementClick(object sender, RoutedEventArgs e)
         {
-            if (!ind.IsActive)
-            {
-                vacum.IsActive = false;
-                tuz.IsActive = false;
-                ath.IsActive = false;
-                ind.IsActive = true;
-                lvMGrup.Items.Filter = IndFilter;
-                CbxByBolumId(3);
-                ClearField();
-            }
+            //if (!ind.IsActive)
+            //{
+            //    vacum.IsActive = false;
+            //    tuz.IsActive = false;
+            //    ath.IsActive = false;
+            //    ind.IsActive = true;
+            //    lvMGrup.Items.Filter = IndFilter;
+            //    CbxByBolumId(3);
+            //    ClearField();
+            //}
         }
         private void Ath_ElementClick(object sender, RoutedEventArgs e)
         {
-            if (!ath.IsActive)
-            {
-                vacum.IsActive = false;
-                tuz.IsActive = false;
-                ath.IsActive = true;
-                ind.IsActive = false;
-                lvMGrup.Items.Filter = AthFilter;
-                CbxByBolumId(4);
-                ClearField();
-            }
+            //if (!ath.IsActive)
+            //{
+            //    vacum.IsActive = false;
+            //    tuz.IsActive = false;
+            //    ath.IsActive = true;
+            //    ind.IsActive = false;
+            //    lvMGrup.Items.Filter = AthFilter;
+            //    CbxByBolumId(4);
+            //    ClearField();
+            //}
         }
 
         private void txtMgrupName_KeyDown(object sender, KeyEventArgs e)

@@ -42,7 +42,13 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
         public DbSet<AktifIslem> AktifIslemler { get; set; }
         public DbSet<Fiyat> Fiyatlar { get; set; }
         public DbSet<Musteri> Musteriler { get; set; }
-        public DbSet<MusteriFiyat> musteriFiyats { get; set; }
+        public DbSet<MusteriFiyat> MusteriFiyats { get; set; }
         public DbSet<Furnace> Furnaces { get; set; }
+        public DbSet<MalGirisKayit> MalGirisKayitlar { get; set; }
+        public DbSet<MalGirisMalzeme> MalGirisMalzemeler { get; set; }
+        public DbSet<MalGirisIslem> MalGirisIslemler { get; set; }
+        public DbSet<MalGirisResim> MalGirisResimler { get; set; }
+
+
     }
 }

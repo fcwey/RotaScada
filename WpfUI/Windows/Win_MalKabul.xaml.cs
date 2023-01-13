@@ -1,7 +1,10 @@
-﻿using Entities.Concrete;
+﻿using Business.Abstract;
+using Business.Concrete;
+using DataAccess.Abstract;
+using DataAccess.Concrete.EntityFramework;
+using Entities.Concrete;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
 using System.Reflection.PortableExecutable;
 using System.Text;
@@ -14,27 +17,61 @@ using System.Windows.Data;
 using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Effects;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using System.Xml;
-using Brush = System.Windows.Media.Brush;
-using Color = System.Drawing.Color;
 
 namespace WpfUI.Windows
 {
     /// <summary>
-    /// Win_Page_MalKabul.xaml etkileşim mantığı
+    /// Win_MalKabul.xaml etkileşim mantığı
     /// </summary>
-    public partial class Win_Page_MalKabul : Window
+    public partial class Win_MalKabul : Window
     {
-        public Win_Page_MalKabul()
+        public Win_MalKabul()
         {
             InitializeComponent();
             m_toolTipClosingTimer = new Timer(ToolTipClosingCallBack, null, Timeout.Infinite, Timeout.Infinite);
+            _malzemeGrupService = new MalzemeGrupManager(new EfMalzemeGrupDal());
+
+            //mal giriş
+            _malGirisKayitService = new MalGirisKayitManager(new EfMalGirisKayitDal());
+            _malGirisMalzemeService = new MalGirisMalzemeManager(new EfMalGirisMalzemeDal());
+            _malGirisIslemService = new MalGirisIslemManager(new EfMalGirisIslemDal());
+
+            malgirisKayit();
         }
+
         private Timer m_toolTipClosingTimer;
+
+        //Dışardan listeler
         public Musteri _selectedMusteri;// gelen
+        public Malzeme _selectedMalzeme;// gelen
+
+        //iç piyasa
+        MalGirisKayit _selectedMalGirisKayit;
+
+
+        //Servisler
+        IMalzemeGrupService _malzemeGrupService;
+
+        IMalGirisKayitService _malGirisKayitService;
+        IMalGirisMalzemeService _malGirisMalzemeService;
+        IMalGirisIslemService _malGirisIslemService;
+        void malgirisKayit()
+        {
+            MalGirisKayit girisKayit = new MalGirisKayit();
+            girisKayit.GirisTarihi=DateTime.Now;
+            girisKayit.TeslimTarihi=DateTime.Now;
+            girisKayit.FirmaId = 1;
+            girisKayit.UserId = 1;
+            var result = _malGirisKayitService.Add(girisKayit);
+            CommandMessage(result.IsSuccess, result.Message);
+            if (result.IsSuccess)
+            {
+                MessageBox.Show(girisKayit.Id.ToString());
+            }
+
+        }
         private void ToolTipClosingCallBack(object p_useless)
         {
             Dispatcher.Invoke(() =>
@@ -49,6 +86,21 @@ namespace WpfUI.Windows
             BrushConverter bc = new BrushConverter();
             FirmaExpander.Background = (Brush)new BrushConverter().ConvertFrom("#68B984");
         }
+        public void selectedMalzemeLoad()
+        {
+            txtMalStandartno.Text = _selectedMalzeme.MalzemeName;
+            txtSertlik.Text = _selectedMalzeme.MaxSertlik;
+            txtMalzemeGrubu.Text = _malzemeGrupService.GetById(_selectedMalzeme.MGrupId).Data.GrupName;
+        }
+        void clearFieldMalzeme()
+        {
+
+            txtMalStandartno.Clear();
+            txtMalzemeGrubu.Clear();
+            txtSertlik.Clear();
+            txtSertDerin.Clear();
+        }
+
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
         {
             Close();
@@ -126,6 +178,42 @@ namespace WpfUI.Windows
             Win_MalKabul_List_Musteri window = new Win_MalKabul_List_Musteri(this);
             //winGrid.Effect = new BlurEffect();
             window.ShowDialog();
+        }
+
+        private void txtMalStandartno_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (_selectedMusteri != null)
+            {
+                e.Handled = true;
+                filterchar = e.Key.ToString();
+                Win_MalKabul_List_Malzeme window = new Win_MalKabul_List_Malzeme(this);
+                //winGrid.Effect = new BlurEffect();
+                window.ShowDialog();
+                //winGrid.Effect = null;
+            }
+            else
+            {
+
+                MessageBox.Show("Firma Seçiniz", "UYARI", MessageBoxButton.OK, MessageBoxImage.Error);
+                txtMalStandartno.Clear();
+            }
+
+        }
+
+        private void btnSelectMalzeme_Click(object sender, RoutedEventArgs e)
+        {
+            if (_selectedMusteri != null)
+            {
+                Win_MalKabul_List_Malzeme window = new Win_MalKabul_List_Malzeme(this);
+                //winGrid.Effect = new BlurEffect();
+                window.ShowDialog();
+            }
+            else
+            {
+
+                MessageBox.Show("Firma Seçiniz", "UYARI", MessageBoxButton.OK, MessageBoxImage.Error);
+                txtMalStandartno.Clear();
+            }
         }
     }
 }

@@ -180,7 +180,7 @@
                    HorizontalOffset="10"
                    VerticalOffset="10">
                 <Grid>
-                    <local:PopupUC x:Name="Header" Foreground="#E0FFFF"/>
+                    <!--<local:PopupUC x:Name="Header" Foreground="#E0FFFF"/>-->
                 </Grid>
             </Popup>
         </Grid>

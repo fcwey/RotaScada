@@ -23,8 +23,8 @@ namespace WpfUI.Windows
     /// </summary>
     public partial class Win_MalKabul_List_Musteri : Window
     {
-        Win_Page_MalKabul _winMalKabul = new Win_Page_MalKabul();
-        public Win_MalKabul_List_Musteri(Win_Page_MalKabul winMalKabul)
+        Win_MalKabul _winMalKabul = new Win_MalKabul();
+        public Win_MalKabul_List_Musteri(Win_MalKabul winMalKabul)
         {
 
             InitializeComponent();

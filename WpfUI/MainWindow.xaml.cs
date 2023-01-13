@@ -108,7 +108,7 @@ namespace WpfUI
 
         private void malKabul_Click(object sender, RoutedEventArgs e)
         {
-            Win_Page_MalKabul WinFurnace = new Win_Page_MalKabul();
+            Win_MalKabul WinFurnace = new Win_MalKabul();
             WinFurnace.ShowDialog();
         }
     }
