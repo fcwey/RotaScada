@@ -83,10 +83,11 @@
 
                 </Menu.ItemsPanel>
 
-                <!--// Main Menu - İşlemler //-->
+                <!--// Main Menu - Mal KAbul //-->
 
-                <MenuItem Header="İşlemler"
-                          Template="{StaticResource Menu_SubMenu_Template}">
+                <MenuItem Header="Mal Kabul"
+                          Name="malkabul"
+                          Template="{StaticResource Menu_Template}" Click="malkabul_Click" >
 
                     <MenuItem.Icon>
 
@@ -95,30 +96,22 @@
 
                     </MenuItem.Icon>
 
-                    <MenuItem Header="Mal Kabul"
-                              Name="malKabul"
-                              Template="{StaticResource Item_Template}" Click="malKabul_Click">
+                 
+                </MenuItem>
 
-                        <MenuItem.Icon>
+                <!--// Main Menu - İşlemler //-->
 
-                            <Image Source="/Assets/img_music.png"
-                                   Stretch="None" />
+                <MenuItem Header="İşlemler"
+                          Name="islemler"
+                          Template="{StaticResource Menu_Template}" Click="islemler_Click">
 
-                        </MenuItem.Icon>
+                    <MenuItem.Icon>
 
-                    </MenuItem>
+                        <Image Source="/img_hotkey.png"
+                               Stretch="None" />
 
-                    <MenuItem Header="İşlem Takip"
-                              Template="{StaticResource Item_Template}">
+                    </MenuItem.Icon>
 
-                        <MenuItem.Icon>
-
-                            <Image Source="/Assets/img_music.png"
-                                   Stretch="None" />
-
-                        </MenuItem.Icon>
-
-                    </MenuItem>
 
                 </MenuItem>
 
@@ -277,7 +270,7 @@
 
                 <!--// Main Menu - Arama Motoru //-->
 
-                <MenuItem Header="Arama Motoru"
+                <MenuItem Header="Arama"
                           Template="{StaticResource Menu_Template}">
 
                     <MenuItem.Icon>

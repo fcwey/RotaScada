@@ -4,6 +4,7 @@ using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
 using Entities.Concrete;
+using Entities.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,6 +48,10 @@ namespace Business.Concrete
             return new SuccessDataResult<List<MalGirisIslem>>(_malGirisIslemDal.GetList().ToList());
         }
 
+        public IDataResult<List<MalGirisIslemDto>> GetListByDto(int BolumId, int MgirisId)
+        {
+            return new SuccessDataResult<List<MalGirisIslemDto>>(_malGirisIslemDal.GetListByBolumDtos(BolumId,MgirisId).ToList());
+        }
 
         public IResult Update(MalGirisIslem malGirisIslem)
         {

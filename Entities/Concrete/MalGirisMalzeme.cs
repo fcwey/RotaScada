@@ -15,15 +15,15 @@ namespace Entities.Concrete
         public int BolumId { get; set; }
         public double Agirlik { get; set; }
         public int Adet { get; set; }
-        public string Sertlik { get; set; }
-        public string SertlikType { get; set; }
-        public string BulunanSertlik { get; set; }
-        public string SertlikDerinlik { get; set; }
+        public string? Sertlik { get; set; }
+        public string? SertlikType { get; set; }
+        public string? BulunanSertlik { get; set; }
+        public string? SertlikDerinlik { get; set; }
         public double Toplam { get; set; }
         public int Secilen { get; set; }
         public int FormNo { get; set; }
         public int Silindi { get; set; }
-        public string SilindiAciklama { get; set; }
+        public string? SilindiAciklama { get; set; }
         public int SilenKullanici { get; set; }
 
     }

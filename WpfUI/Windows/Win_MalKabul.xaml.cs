@@ -1,8 +1,11 @@
 ﻿using Business.Abstract;
 using Business.Concrete;
+using Castle.Core.Internal;
+using Core.Utilities.Results;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
+using Entities.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -38,6 +41,9 @@ namespace WpfUI.Windows
             _malGirisMalzemeService = new MalGirisMalzemeManager(new EfMalGirisMalzemeDal());
             _malGirisIslemService = new MalGirisIslemManager(new EfMalGirisIslemDal());
 
+            _bolumIslemService = new BolumIslemManager(new EfBolumIslemDal());
+            _fiyatService = new FiyatManager(new EfFiyatDal());
+            CbxByBolumId(1);
             malgirisKayit();
         }
 
@@ -49,26 +55,27 @@ namespace WpfUI.Windows
 
         //iç piyasa
         MalGirisKayit _selectedMalGirisKayit;
+        MalGirisMalzeme _malGirisMalzeme;
 
-
+        int selectedBolumId;
         //Servisler
         IMalzemeGrupService _malzemeGrupService;
 
         IMalGirisKayitService _malGirisKayitService;
         IMalGirisMalzemeService _malGirisMalzemeService;
         IMalGirisIslemService _malGirisIslemService;
+
+        IBolumIslemService _bolumIslemService;
+        IFiyatService _fiyatService;
         void malgirisKayit()
         {
             MalGirisKayit girisKayit = new MalGirisKayit();
-            girisKayit.GirisTarihi=DateTime.Now;
-            girisKayit.TeslimTarihi=DateTime.Now;
-            girisKayit.FirmaId = 1;
-            girisKayit.UserId = 1;
             var result = _malGirisKayitService.Add(girisKayit);
             CommandMessage(result.IsSuccess, result.Message);
             if (result.IsSuccess)
             {
-                MessageBox.Show(girisKayit.Id.ToString());
+                _selectedMalGirisKayit = girisKayit;
+                // MessageBox.Show(girisKayit.Id.ToString());
             }
 
         }
@@ -99,6 +106,9 @@ namespace WpfUI.Windows
             txtMalzemeGrubu.Clear();
             txtSertlik.Clear();
             txtSertDerin.Clear();
+            txtAdet.Clear();
+            txtAgirlik.Clear();
+            _selectedMalzeme = null;
         }
 
         private void CloseBtn_Click(object sender, RoutedEventArgs e)
@@ -210,9 +220,213 @@ namespace WpfUI.Windows
             }
             else
             {
-
                 MessageBox.Show("Firma Seçiniz", "UYARI", MessageBoxButton.OK, MessageBoxImage.Error);
-                txtMalStandartno.Clear();
+            }
+        }
+
+        bool malzemeControl()
+        {
+            if (_selectedMusteri == null)
+            {
+                MessageBox.Show("Firma Seçiniz", "UYARI", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            else if (string.IsNullOrWhiteSpace(txtAdet.Text))
+            {
+                MessageBox.Show("Adet değeri girilmedi", "UYARI", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            else if (string.IsNullOrWhiteSpace(txtAgirlik.Text))
+            {
+                MessageBox.Show("Ağırlık giriniz", "UYARI", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            else if (_selectedMalzeme == null)
+            {
+                MessageBox.Show("Malzeme Seçiniz", "UYARI", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            return true;
+        }
+        bool islemControl()
+        {
+            if (lvMalzeme.SelectedIndex == -1)
+            {
+                MessageBox.Show("Malzeme Seçilmedi", "UYARI", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            else if (cbxBolumIslem.SelectedIndex == -1)
+            {
+                MessageBox.Show("İşlem seçilmedi!", "UYARI", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            else if (string.IsNullOrWhiteSpace(txtBirimFiyat.Text))
+            {
+                MessageBox.Show("Birim Fiyat giriniz", "UYARI", MessageBoxButton.OK, MessageBoxImage.Error);
+                return false;
+            }
+            return true;
+        }
+        void loadMalzeme()
+        {
+            if (_selectedMalGirisKayit != null)
+            {
+                List<MalGirisMalzemeDto> malzemedtos = _malGirisMalzemeService.GetListByDto(selectedBolumId, _selectedMalGirisKayit.Id).Data;
+                lvMalzeme.ItemsSource = malzemedtos;
+               
+                clearFieldMalzeme();
+            }
+        }
+        private void btnMalzemeEkle_Click(object sender, RoutedEventArgs e)
+        {
+            // Kayıtlı malzemeyi ekler
+            //  malzemeEkle();
+            // _malGirisMalzemeService
+            if (malzemeControl())
+            {
+                MalGirisMalzeme malGirisMalzeme = new MalGirisMalzeme();
+                malGirisMalzeme.MalGirisId = _selectedMalGirisKayit.Id;
+                malGirisMalzeme.Adet = Convert.ToInt16(txtAdet.Text);
+                malGirisMalzeme.Agirlik = Convert.ToDouble(txtAgirlik.Text);
+                malGirisMalzeme.Sertlik = txtSertlik.Text;
+                malGirisMalzeme.SertlikDerinlik = txtSertDerin.Text;
+                malGirisMalzeme.BolumId = selectedBolumId;
+                malGirisMalzeme.MalzemeId = _selectedMalzeme.Id;
+                var result = _malGirisMalzemeService.Add(malGirisMalzeme);
+                CommandMessage(result.IsSuccess, result.Message);
+                if (result.IsSuccess)
+                {
+                    loadMalzeme();
+
+                }
+            }
+        }
+        void CbxByBolumId(int xId)
+        {
+            List<BolumIslem> bolumler = _bolumIslemService.GetListByBolumId(xId).Data;
+            cbxBolumIslem.SelectedValuePath = "Id";
+            cbxBolumIslem.DisplayMemberPath = "BolumIslemi";
+
+            cbxBolumIslem.ItemsSource = bolumler;
+            selectedBolumId = xId;
+            if (_selectedMalGirisKayit != null)
+            {
+                loadMalzeme();
+                loadIslem();
+                clearFieldMalzeme();
+                clearFieldIslem();
+                if (lvMalzeme.Items.Count > 0)
+                {
+                    lvMalzeme.SelectedIndex = 0;
+                    lvMalzeme.Focus();
+                }
+            }
+
+            //cbxBolumIslem.ItemsSource
+            // malzemeleri Listele
+
+
+
+        }
+        private void vacum_ElementClick(object sender, RoutedEventArgs e)
+        {
+            if (!vacum.IsActive)
+            {
+                vacum.IsActive = true;
+                tuz.IsActive = false;
+                ath.IsActive = false;
+                ind.IsActive = false;
+                //  lvMGrup.Items.Filter = VacumFilter;
+                CbxByBolumId(1);
+                
+            }
+        }
+
+        private void tuz_ElementClick(object sender, RoutedEventArgs e)
+        {
+            if (!tuz.IsActive)
+            {
+                vacum.IsActive = false;
+                tuz.IsActive = true;
+                ath.IsActive = false;
+                ind.IsActive = false;
+                //lvMGrup.Items.Filter = TuzFilter;
+                CbxByBolumId(2);
+
+            }
+        }
+
+        private void ind_ElementClick(object sender, RoutedEventArgs e)
+        {
+            if (!ind.IsActive)
+            {
+                vacum.IsActive = false;
+                tuz.IsActive = false;
+                ath.IsActive = false;
+                ind.IsActive = true;
+                // lvMGrup.Items.Filter = IndFilter;
+                CbxByBolumId(3);
+            }
+        }
+
+        private void ath_ElementClick(object sender, RoutedEventArgs e)
+        {
+            if (!ath.IsActive)
+            {
+                vacum.IsActive = false;
+                tuz.IsActive = false;
+                ath.IsActive = true;
+                ind.IsActive = false;
+                //lvMGrup.Items.Filter = AthFilter;
+                CbxByBolumId(4);
+            }
+        }
+        void clearFieldIslem()
+        {
+            txtBirimFiyat.Clear();
+            txtNotIslem.Clear();
+            cbxBolumIslem.SelectedIndex = -1;
+        }
+        void loadIslem()
+        {
+            List<MalGirisIslemDto> list = _malGirisIslemService.GetListByDto(selectedBolumId, _malGirisMalzeme.Id).Data;
+            lvIslem.ItemsSource = list;
+        }
+        private void btnAddIslem_Click(object sender, RoutedEventArgs e)
+        {
+            if (islemControl())
+            {
+                MalGirisIslem malGirisislem = new MalGirisIslem();
+                malGirisislem.BolumIslemId = (int)cbxBolumIslem.SelectedValue;
+                malGirisislem.BirimFiyat = Convert.ToDouble(txtBirimFiyat.Text);
+                malGirisislem.Not = txtNotIslem.Text;
+                malGirisislem.MalGirisMalzemeId = _malGirisMalzeme.Id;
+                if (true)
+                {
+                    //fiyat değiştimi???
+                }
+                var result = _malGirisIslemService.Add(malGirisislem);
+                CommandMessage(result.IsSuccess, result.Message);
+                if (result.IsSuccess)
+                {
+                    loadIslem();
+
+                }
+            }
+        }
+
+        private void cbxBolumIslem_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            // txtBirimFiyat.Text=
+        }
+
+        private void lvMalzeme_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!(lvMalzeme.SelectedItems is null) && lvMalzeme.SelectedItems.Count > 0)  //seçilen item null değilse
+            {
+
+                _malGirisMalzeme = _malGirisMalzemeService.GetById((lvMalzeme.SelectedItem as MalGirisMalzemeDto).Id).Data;
+                loadIslem();
             }
         }
     }

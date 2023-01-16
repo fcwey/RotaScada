@@ -10,10 +10,10 @@ namespace Entities.Concrete
     public class MalGirisKayit:IEntity
     {
         public int Id { get; set; }
-        public int FirmaId { get; set; }
-        public int UserId { get; set; }
-        public DateTime GirisTarihi { get; set; }
-        public DateTime TeslimTarihi { get; set; }
+        public int? FirmaId { get; set; }
+        public int? UserId { get; set; }
+        public DateTime? GirisTarihi { get; set; }
+        public DateTime? TeslimTarihi { get; set; }
 
     }
 }

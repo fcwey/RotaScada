@@ -28,6 +28,7 @@
     <None Remove="img_folder.png" />
     <None Remove="img_history.png" />
     <None Remove="img_home.png" />
+    <None Remove="img_hotkey.png" />
     <None Remove="img_input.png" />
     <None Remove="img_metal.png" />
     <None Remove="img_movies.png" />
@@ -65,6 +66,7 @@
     <Resource Include="img_arrow.png" />
     <Resource Include="img_exit.png" />
     <Resource Include="img_history.png" />
+    <Resource Include="img_hotkey.png" />
     <Resource Include="img_input.png" />
     <Resource Include="img_search.png" />
     <Resource Include="img_setting.png" />

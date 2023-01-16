@@ -106,9 +106,15 @@ namespace WpfUI
             WinFurnace.ShowDialog();
         }
 
-        private void malKabul_Click(object sender, RoutedEventArgs e)
+        private void malkabul_Click(object sender, RoutedEventArgs e)
         {
             Win_MalKabul WinFurnace = new Win_MalKabul();
+            WinFurnace.ShowDialog();
+        }
+
+        private void islemler_Click(object sender, RoutedEventArgs e)
+        {
+            win_Deneme WinFurnace = new win_Deneme();
             WinFurnace.ShowDialog();
         }
     }
