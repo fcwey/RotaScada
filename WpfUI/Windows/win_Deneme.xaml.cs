@@ -2,6 +2,7 @@
 using Business.Concrete;
 using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
+using Entities.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,19 +30,39 @@ namespace WpfUI.Windows
         {
             InitializeComponent();
             _servisService = new ServisManager(new EfServisDal());
+            _bolumService = new BolumManager(new EfBolumDal());
             loadServis();
         }
         IServisService _servisService;
+        IBolumService _bolumService;
+        Servis _servis;
         void loadServis()
         {
-            List<Servis> servis = _servisService.GetList().Data;
+            List<Bolum> servis = _bolumService.GetList().Data;
             lbx.ItemsSource= servis;
-            //Collection= servis;
         }
 
         private void lbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            if (!(lbx.SelectedItems is null) && lbx.SelectedItems.Count > 0)  //seçilen item null değilse
+            {
+                //_servis = lbx.SelectedItem as Servis;
+                //MessageBox.Show(_servis.Name.ToString());
+            }
+        }
 
+        private void AGotFocus(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                FrameworkElement element = sender as FrameworkElement;
+                Bolum item = element.DataContext as Bolum;
+                if (item != null)
+                {
+                    lbx.SelectedValue = item;
+                }
+            }
+            catch { }
         }
     }
 }

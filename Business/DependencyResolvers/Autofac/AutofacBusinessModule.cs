@@ -72,6 +72,14 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<FurnaceManager>().As<IFurnaceService>();
             builder.RegisterType<EfFurnaceDal>().As<IFurnaceDal>();
 
+            builder.RegisterType<IslemTakipManager>().As<IIslemTakipService>();
+            builder.RegisterType<EfIslemTakipDal>().As<IIslemTakipDal>();
+
+
+
+
+
+            //-----------------------------
             builder.RegisterType<UserManager>().As<IUserService>();
             builder.RegisterType<EfUserDal>().As<IUserDal>();
 

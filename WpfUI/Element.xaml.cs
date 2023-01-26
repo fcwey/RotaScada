@@ -46,6 +46,15 @@ namespace WpfUI
         public static readonly DependencyProperty TitleProperty = DependencyProperty.Register("Title", typeof(string), typeof(Element));
 
 
+        public int Status
+        {
+            get { return (int)GetValue(StatusProperty); }
+            set { SetValue(StatusProperty, value); }
+        }
+        public static readonly DependencyProperty StatusProperty = DependencyProperty.Register("StatusFurnace", typeof(string), typeof(Element));
+
+
+
         public bool IsActive
         {
             get { return (bool)GetValue(IsActiveProperty); }

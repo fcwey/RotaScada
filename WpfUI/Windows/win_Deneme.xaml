@@ -6,45 +6,73 @@
         xmlns:local="clr-namespace:WpfUI.Windows" xmlns:uc="clr-namespace:WpfUI"
         mc:Ignorable="d"
         Title="win_Deneme" Height="450" Width="800">
-    <Window.Resources>
-        <Style TargetType="{x:Type ListBoxItem}">
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
-                        <Border x:Name="border"
+    
+    <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto" >
+        <ListBox VirtualizingStackPanel.IsVirtualizing="False" Name="lbx" SelectionChanged="lbx_SelectionChanged"   >
+            <ListBox.Resources>
+                <Style TargetType="{x:Type ListBoxItem}">
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                <Border x:Name="Bd"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
                             Background="{TemplateBinding Background}"
-                            BorderBrush="{TemplateBinding BorderBrush}">
-                            <ContentPresenter VerticalAlignment="{TemplateBinding VerticalAlignment}"
-                                          HorizontalAlignment="{TemplateBinding HorizontalAlignment}" />
-                        </Border>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-    </Window.Resources>
-    <ListBox Name="lbx" SelectionChanged="lbx_SelectionChanged"   >
-        <ListBox.Resources>
-            <Style TargetType="ListViewItem">
-                <Style.Triggers>
+                            Padding="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="true">
+                                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                </Border>
+                                <ControlTemplate.Triggers>
+                                    <MultiTrigger>
+                                        <MultiTrigger.Conditions>
+                                            <Condition Property="Selector.IsSelectionActive"
+                                            Value="False" />
+                                            <Condition Property="IsSelected"
+                                            Value="True" />
+                                        </MultiTrigger.Conditions>
+                                        <Setter Property="Background"
+                                    TargetName="Bd"
+                                    Value="Transparent" />
+                                    </MultiTrigger>
+                                    <MultiTrigger>
+                                        <MultiTrigger.Conditions>
+                                            <Condition Property="Selector.IsSelectionActive"
+                                            Value="True" />
+                                            <Condition Property="IsSelected"
+                                            Value="True" />
+                                        </MultiTrigger.Conditions>
+                                        <Setter Property="Background"
+                                    TargetName="Bd"
+                                    Value="Transparent" />
+                                    </MultiTrigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+            </ListBox.Resources>
 
-                    <Trigger Property="IsSelected" Value="True">
-                        <Setter Property="IsEnabled" Value="True"/>
-                    </Trigger>
-                </Style.Triggers>
-            </Style>
-        </ListBox.Resources>
-        <ListBox.ItemsPanel>
-            <ItemsPanelTemplate>
-                <WrapPanel />
-            </ItemsPanelTemplate>
-        </ListBox.ItemsPanel>
-        <ListBox.ItemTemplate>
-            <DataTemplate>
-                <!--<TextBlock Text="{Binding Name}" />-->
-                <uc:Element Title="{Binding Name}" IsActive="{Binding Path=IsActive, 
-                                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListViewItem}}}" />
-            </DataTemplate>
-        </ListBox.ItemTemplate>
-    </ListBox>
+            <ListBox.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <WrapPanel Orientation="Vertical" />
+                </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+            <ListBox.ItemTemplate>
+
+                <DataTemplate>
+                    <!--<TextBlock Text="{Binding Name}" />-->
+                    <StackPanel>
+                        <uc:FurnaceElement  Title="{Binding Name}" Status="{Binding Id}" GotFocus="AGotFocus"   IsActive="{Binding Path=IsSelected,
+                                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"  />
+                    </StackPanel>
+
+                </DataTemplate>
+            </ListBox.ItemTemplate>
+
+        </ListBox>
+    </ScrollViewer>
+   
 
 </Window>

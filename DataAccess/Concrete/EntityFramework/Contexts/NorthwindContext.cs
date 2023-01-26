@@ -48,6 +48,7 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
         public DbSet<MalGirisMalzeme> MalGirisMalzemeler { get; set; }
         public DbSet<MalGirisIslem> MalGirisIslemler { get; set; }
         public DbSet<MalGirisResim> MalGirisResimler { get; set; }
+        public DbSet<IslemTakip> IslemTakips { get; set; }
 
 
     }

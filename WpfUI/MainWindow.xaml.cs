@@ -114,6 +114,12 @@ namespace WpfUI
 
         private void islemler_Click(object sender, RoutedEventArgs e)
         {
+            Win_IslemTakip WinFurnace = new Win_IslemTakip();
+            WinFurnace.ShowDialog();
+        }
+
+        private void abaut_Click(object sender, RoutedEventArgs e)
+        {
             win_Deneme WinFurnace = new win_Deneme();
             WinFurnace.ShowDialog();
         }

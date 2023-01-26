@@ -345,7 +345,8 @@
                 <!--// Main Menu - About //-->
 
                 <MenuItem Header="Hakkında"
-                          Template="{StaticResource Menu_Template}">
+                          Name="abaut"
+                          Template="{StaticResource Menu_Template}" Click="abaut_Click">
 
                     <MenuItem.Icon>
 
