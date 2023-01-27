@@ -1,4 +1,5 @@
 ﻿using Core.Entities;
+using Core.Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,11 +15,19 @@ namespace Entities.Concrete
         public int? UserId { get; set; }
         public DateTime? GirisTarihi { get; set; }
         public DateTime? TeslimTarihi { get; set; }
-
+        public int Status { get; set; }
     }
 }
-//[Id] INT IDENTITY(1, 1) NOT NULL,
-//    [FirmaId]      INT      NOT NULL,
-//    [UserId]       INT      NOT NULL,
+//CREATE TABLE[dbo].[MalGirisKayitlar] (
+//    [Id]           INT IDENTITY(1, 1) NOT NULL,
+//    [FirmaId]      INT      NULL,
+//    [UserId]       INT      NULL,
 //    [GirisTarihi]  DATETIME NULL,
 //    [TeslimTarihi] DATE     NULL,
+//    [Status] INT NULL,
+//    PRIMARY KEY CLUSTERED ([Id] ASC)
+//); ULL,
+
+
+
+//Status: 0:Pasif 1:Aktif  2:Düzenlemede

@@ -22,7 +22,7 @@ namespace DataAccess.Concrete.EntityFramework
                               join bolumislem in context.BolumIslemler on mgIslem.BolumIslemId equals bolumislem.Id
                               join bolum in context.Bolumler on bolumislem.BolumId equals bolum.Id
                               where mgMalzeme.BolumId == BolumId
-                              where mgMalzeme.Id== MgirisId
+                              where mgMalzeme.Id == MgirisId
                               select new MalGirisIslemDto()
                               {
                                   Id = mgIslem.Id,
@@ -32,6 +32,39 @@ namespace DataAccess.Concrete.EntityFramework
                                   BolumName = bolum.Name
                               }).ToList();
                 return result;
+            }
+        }
+
+        public void DeleteListByMGirisMalzemeId(int MgirisMalzemeId)
+        {
+
+            using (var context = new NorthwindContext())
+            {
+
+                context.MalGirisIslemler.RemoveRange(context.MalGirisIslemler.Where(x => x.MalGirisMalzemeId == MgirisMalzemeId));
+
+                context.SaveChanges();
+            }
+        }
+
+        public void DeleteListByMGirisMgKayitId(int MgirisKayitId)
+        {
+            using (var context = new NorthwindContext())
+            {
+                var result = (from mgIslem in context.MalGirisIslemler
+                              join mgMalzeme in context.MalGirisMalzemeler on mgIslem.MalGirisMalzemeId equals mgMalzeme.Id
+                              where mgMalzeme.MalGirisId == MgirisKayitId
+                              select new MalGirisIslem()
+                              {
+                                  Id = mgIslem.Id,
+                                  BirimFiyat = mgIslem.BirimFiyat,
+                                  BolumIslemId = mgIslem.BolumIslemId,
+                                  FiyatChange = mgIslem.FiyatChange,
+                                  MalGirisMalzemeId = mgIslem.MalGirisMalzemeId,
+                                  Not = mgIslem.Not
+                              }).ToList();
+                context.MalGirisIslemler.RemoveRange(result);
+                context.SaveChanges();
             }
         }
     }

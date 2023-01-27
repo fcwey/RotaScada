@@ -13,6 +13,18 @@ namespace DataAccess.Concrete.EntityFramework
 {
     public class EfMalGirisMalzemeDal : EfEntityRepositoryBase<MalGirisMalzeme, Contexts.NorthwindContext>, IMalGirisMalzemeDal
     {
+        public void DeleteListByMGirisMgKayitId(int MgirisKayitId)
+        {
+            using (var context = new NorthwindContext())
+            {
+                context.MalGirisMalzemeler.RemoveRange(context.MalGirisMalzemeler.Where(x => x.MalGirisId== MgirisKayitId));
+
+                context.SaveChanges();
+
+
+            }
+        }
+
         public List<MalGirisMalzemeDto> GetListByBolumDtos(int BolumId, int MgirisId)
         {
             using (var context = new NorthwindContext())
@@ -32,6 +44,37 @@ namespace DataAccess.Concrete.EntityFramework
                                   MalzemeStandartNo= malzemeler.MalzemeName
 
 
+                              }).ToList();
+                return result;
+
+
+            }
+        }
+
+        public List<MalGirisMalzeme> GetListByMgKayitId(int MgirisId)
+        {
+            using (var context = new NorthwindContext())
+            {
+                var result = (from mgMalzemeler in context.MalGirisMalzemeler
+                              where mgMalzemeler.MalGirisId == MgirisId
+                              select new MalGirisMalzeme()
+                              {
+                                  Id = mgMalzemeler.Id,
+                                  Adet = mgMalzemeler.Adet,
+                                  Agirlik = mgMalzemeler.Agirlik,
+                                  Sertlik = mgMalzemeler.Sertlik,
+                                  BolumId= mgMalzemeler.BolumId,
+                                  BulunanSertlik= mgMalzemeler.BulunanSertlik,
+                                  FormNo= mgMalzemeler.FormNo,
+                                  MalGirisId= mgMalzemeler.MalGirisId,
+                                  MalzemeId= mgMalzemeler.MalzemeId,
+                                  Secilen= mgMalzemeler.Secilen,
+                                  SertlikDerinlik= mgMalzemeler.SertlikDerinlik,
+                                  SertlikType = mgMalzemeler.SertlikType,
+                                  SilenKullanici = mgMalzemeler.SilenKullanici,
+                                  Silindi = mgMalzemeler.Silindi,
+                                  SilindiAciklama = mgMalzemeler.SilindiAciklama,
+                                  Toplam= mgMalzemeler.Toplam
                               }).ToList();
                 return result;
 

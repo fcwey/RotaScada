@@ -130,15 +130,71 @@
                         <StackPanel Orientation="Vertical">
                             <Expander Header="Malzeme Bilgileri" Background="LightGray" Foreground="DodgerBlue" FontSize="15"/>
                             <StackPanel Orientation="Horizontal">
-                                <ScrollViewer  VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto" Padding="0 0" VerticalAlignment="Top" Width="{Binding ElementName=grid,Path=ActualWidth}">
-                                    <StackPanel Name="stackBolumAdd" Orientation="Horizontal"  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0">
+                                <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto" >
+                                    <ListBox Background="Transparent" BorderThickness="0" VirtualizingStackPanel.IsVirtualizing="False" Name="lbx" SelectionChanged="lbx_SelectionChanged"   >
+                                        <ListBox.Resources>
+                                            <Style TargetType="{x:Type ListBoxItem}">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                            <Border x:Name="Bd"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="true">
+                                                                <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                            </Border>
+                                                            <ControlTemplate.Triggers>
+                                                                <MultiTrigger>
+                                                                    <MultiTrigger.Conditions>
+                                                                        <Condition Property="Selector.IsSelectionActive"
+                                            Value="False" />
+                                                                        <Condition Property="IsSelected"
+                                            Value="True" />
+                                                                    </MultiTrigger.Conditions>
+                                                                    <Setter Property="Background"
+                                    TargetName="Bd"
+                                    Value="Transparent" />
+                                                                </MultiTrigger>
+                                                                <MultiTrigger>
+                                                                    <MultiTrigger.Conditions>
+                                                                        <Condition Property="Selector.IsSelectionActive"
+                                            Value="True" />
+                                                                        <Condition Property="IsSelected"
+                                            Value="True" />
+                                                                    </MultiTrigger.Conditions>
+                                                                    <Setter Property="Background"
+                                    TargetName="Bd"
+                                    Value="Transparent" />
+                                                                </MultiTrigger>
+                                                            </ControlTemplate.Triggers>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </ListBox.Resources>
 
-                                        <uc:Element x:Name="vacum" Title="Vakum Fırınları" IsActive="True" VerticalAlignment="Bottom" ElementClick="vacum_ElementClick"/>
-                                        <uc:Element x:Name="tuz" Title="Tuz Banyoları"   VerticalAlignment="Bottom" ElementClick="tuz_ElementClick"/>
-                                        <uc:Element x:Name="ind" Title="İnduksiyon" VerticalAlignment="Bottom" ElementClick="ind_ElementClick"/>
-                                        <uc:Element x:Name="ath" Title="Atmosfer Yagda"  VerticalAlignment="Bottom" ElementClick="ath_ElementClick"/>
+                                        <ListBox.ItemsPanel>
+                                            <ItemsPanelTemplate>
+                                                <WrapPanel  />
+                                            </ItemsPanelTemplate>
+                                        </ListBox.ItemsPanel>
+                                        <ListBox.ItemTemplate>
 
-                                    </StackPanel>
+                                            <DataTemplate>
+                                                <!--<TextBlock Text="{Binding Name}" />-->
+                                                <StackPanel>
+                                                    <uc:Element Title="{Binding Name}"  GotFocus="AGotFocus"   IsActive="{Binding Path=IsSelected,
+                                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"  />
+                                                </StackPanel>
+
+                                            </DataTemplate>
+                                        </ListBox.ItemTemplate>
+
+                                    </ListBox>
                                 </ScrollViewer>
                             </StackPanel>
                             <StackPanel>
@@ -215,7 +271,7 @@
                                             </Border>
                                         </Grid>
                                     </Border>
-                                    <ListView  Grid.Row="1"  FontSize="15" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="0,10,0,0"  AlternationCount="2" Name="lvMalzeme" Grid.ColumnSpan="7" SelectionChanged="lvMalzeme_SelectionChanged" >
+                                    <ListView  Grid.Row="1" FontSize="15" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="0,10,0,0"  AlternationCount="2" Name="lvMalzeme" Grid.ColumnSpan="7" SelectionChanged="lvMalzeme_SelectionChanged" >
                                         <ListView.View>
                                             <GridView  >
                                                 <GridViewColumn Width="Auto"  DisplayMemberBinding="{Binding MalzemeGrupName}">

@@ -9,6 +9,7 @@ using Entities.Dtos;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net.WebSockets;
 using System.Reflection.PortableExecutable;
 using System.Text;
 using System.Threading;
@@ -37,14 +38,19 @@ namespace WpfUI.Windows
             _malzemeGrupService = new MalzemeGrupManager(new EfMalzemeGrupDal());
 
             //mal giriş
-            _malGirisKayitService = new MalGirisKayitManager(new EfMalGirisKayitDal());
-            _malGirisMalzemeService = new MalGirisMalzemeManager(new EfMalGirisMalzemeDal());
             _malGirisIslemService = new MalGirisIslemManager(new EfMalGirisIslemDal());
+            _malGirisMalzemeService = new MalGirisMalzemeManager(new EfMalGirisMalzemeDal(), _malGirisIslemService);
+            _malGirisKayitService = new MalGirisKayitManager(new EfMalGirisKayitDal(), _malGirisMalzemeService);
+
+           
+           
 
             _bolumIslemService = new BolumIslemManager(new EfBolumIslemDal());
             _fiyatService = new FiyatManager(new EfFiyatDal());
-            CbxByBolumId(1);
-            malgirisKayit();
+
+            _bolumService = new BolumManager(new EfBolumDal());
+            loadServis();
+             
         }
 
         private Timer m_toolTipClosingTimer;
@@ -60,7 +66,7 @@ namespace WpfUI.Windows
         int selectedBolumId;
         //Servisler
         IMalzemeGrupService _malzemeGrupService;
-
+        IBolumService _bolumService;
         IMalGirisKayitService _malGirisKayitService;
         IMalGirisMalzemeService _malGirisMalzemeService;
         IMalGirisIslemService _malGirisIslemService;
@@ -70,12 +76,13 @@ namespace WpfUI.Windows
         void malgirisKayit()
         {
             MalGirisKayit girisKayit = new MalGirisKayit();
+            girisKayit.UserId = 1;
             var result = _malGirisKayitService.Add(girisKayit);
             CommandMessage(result.IsSuccess, result.Message);
             if (result.IsSuccess)
             {
                 _selectedMalGirisKayit = girisKayit;
-                // MessageBox.Show(girisKayit.Id.ToString());
+                 MessageBox.Show(girisKayit.Id.ToString());
             }
 
         }
@@ -170,24 +177,56 @@ namespace WpfUI.Windows
 
         private void btnKaydet_Click(object sender, RoutedEventArgs e)
         {
+            if (_selectedMalGirisKayit != null)
+            {
+                MalGirisKayit kayit = new MalGirisKayit();
+                kayit = _selectedMalGirisKayit;
+                kayit.FirmaId = _selectedMusteri.Id;
+                // kayit.GirisTarihi
+                //kayit.TeslimTarihi
+                // kayit.UserId
+                var result = _malGirisKayitService.Update(kayit);
+                CommandMessage(result.IsSuccess, result.Message);
+                if (result.IsSuccess)
+                {
+                    MessageBox.Show(result.Message);
+
+                }
+            }
+            else
+            {
+                MessageBox.Show("Firma giriniz.");
+            }
+
+            //update yap ve bir çıkış bekle ; işlem tanımlanmamış yada bir nedenle yapılamıyor vs
 
         }
         public string filterchar;
         private void txtFirmaName_KeyDown(object sender, KeyEventArgs e)
         {
+            
             e.Handled = true;
             filterchar = e.Key.ToString();
             Win_MalKabul_List_Musteri window = new Win_MalKabul_List_Musteri(this);
             //winGrid.Effect = new BlurEffect();
             window.ShowDialog();
             //winGrid.Effect = null;
+
+
         }
 
         private void btnSelect_Click(object sender, RoutedEventArgs e)
         {
+            if (_selectedMalGirisKayit==null)
+            {
+                malgirisKayit();
+            }
+           
             Win_MalKabul_List_Musteri window = new Win_MalKabul_List_Musteri(this);
             //winGrid.Effect = new BlurEffect();
             window.ShowDialog();
+
+
         }
 
         private void txtMalStandartno_KeyDown(object sender, KeyEventArgs e)
@@ -273,7 +312,7 @@ namespace WpfUI.Windows
             {
                 List<MalGirisMalzemeDto> malzemedtos = _malGirisMalzemeService.GetListByDto(selectedBolumId, _selectedMalGirisKayit.Id).Data;
                 lvMalzeme.ItemsSource = malzemedtos;
-               
+
                 clearFieldMalzeme();
             }
         }
@@ -328,59 +367,7 @@ namespace WpfUI.Windows
 
 
         }
-        private void vacum_ElementClick(object sender, RoutedEventArgs e)
-        {
-            if (!vacum.IsActive)
-            {
-                vacum.IsActive = true;
-                tuz.IsActive = false;
-                ath.IsActive = false;
-                ind.IsActive = false;
-                //  lvMGrup.Items.Filter = VacumFilter;
-                CbxByBolumId(1);
-                
-            }
-        }
 
-        private void tuz_ElementClick(object sender, RoutedEventArgs e)
-        {
-            if (!tuz.IsActive)
-            {
-                vacum.IsActive = false;
-                tuz.IsActive = true;
-                ath.IsActive = false;
-                ind.IsActive = false;
-                //lvMGrup.Items.Filter = TuzFilter;
-                CbxByBolumId(2);
-
-            }
-        }
-
-        private void ind_ElementClick(object sender, RoutedEventArgs e)
-        {
-            if (!ind.IsActive)
-            {
-                vacum.IsActive = false;
-                tuz.IsActive = false;
-                ath.IsActive = false;
-                ind.IsActive = true;
-                // lvMGrup.Items.Filter = IndFilter;
-                CbxByBolumId(3);
-            }
-        }
-
-        private void ath_ElementClick(object sender, RoutedEventArgs e)
-        {
-            if (!ath.IsActive)
-            {
-                vacum.IsActive = false;
-                tuz.IsActive = false;
-                ath.IsActive = true;
-                ind.IsActive = false;
-                //lvMGrup.Items.Filter = AthFilter;
-                CbxByBolumId(4);
-            }
-        }
         void clearFieldIslem()
         {
             txtBirimFiyat.Clear();
@@ -389,8 +376,12 @@ namespace WpfUI.Windows
         }
         void loadIslem()
         {
-            List<MalGirisIslemDto> list = _malGirisIslemService.GetListByDto(selectedBolumId, _malGirisMalzeme.Id).Data;
-            lvIslem.ItemsSource = list;
+            if (_malGirisMalzeme != null)
+            {
+                List<MalGirisIslemDto> list = _malGirisIslemService.GetListByDto(selectedBolumId, _malGirisMalzeme.Id).Data;
+                lvIslem.ItemsSource = list;
+            }
+
         }
         private void btnAddIslem_Click(object sender, RoutedEventArgs e)
         {
@@ -410,6 +401,7 @@ namespace WpfUI.Windows
                 if (result.IsSuccess)
                 {
                     loadIslem();
+                    clearFieldIslem();
 
                 }
             }
@@ -428,6 +420,34 @@ namespace WpfUI.Windows
                 _malGirisMalzeme = _malGirisMalzemeService.GetById((lvMalzeme.SelectedItem as MalGirisMalzemeDto).Id).Data;
                 loadIslem();
             }
+        }
+        void loadServis()
+        {
+            List<Bolum> bolums = _bolumService.GetList().Data;
+            lbx.ItemsSource = bolums;
+            if (lbx.Items.Count > 0) lbx.SelectedIndex = 0;
+        }
+
+
+        private void lbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!(lbx.SelectedItems is null) && lbx.SelectedItems.Count > 0)  //seçilen item null değilse
+            {
+                CbxByBolumId((lbx.SelectedItem as Bolum).Id);
+            }
+        }
+        private void AGotFocus(object sender, RoutedEventArgs e)
+        {
+            try
+            {
+                FrameworkElement element = sender as FrameworkElement;
+                Bolum item = element.DataContext as Bolum;
+                if (item != null)
+                {
+                    lbx.SelectedValue = item;
+                }
+            }
+            catch { }
         }
     }
 }

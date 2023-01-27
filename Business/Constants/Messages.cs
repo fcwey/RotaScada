@@ -1,4 +1,5 @@
 ﻿using Core.Entities.Concrete;
+using Entities.Concrete;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -33,5 +34,22 @@ namespace Business.Constants
         public static string ServisDeleted= "Servis aracı Başarıyla silindi";
         public static string ServisAdded = "Servis aracı Başarıyla eklendi";
         public static string ServisNotFound = "Servis zaten sisteme kayıtlı değil";
+
+
+
+        //MalGirisKayıt
+        public static string MalKayitMalzemeYok="Hiç Malzeme Eklenmedi, en az bir malzeme eklenmelidir.";
+        public static string MalKayitIslemYok = "Malzemenin yapılacağı işlem tanımlanmamış, en az bir işlem tanımlanmalıdır.";
+        public static string MalGirisKayitAlreadyExists = "Mal Kabul Kaydı zaten mevcut";
+        public static string MalGirisKayitUpdated = "Mal Kabul Kaydı Başarıyla güncellendi";
+        public static string MalKayitNotFound = "Mal Kabul Geçerli Kayit Bulunamadı";
+
+
+       //Mal Giris İşlem Mesajları
+        public static string MgIslemListDeleted=   "Seçili malzemenin tüm işlemleri silindi";
+
+
+        //Mal Giris Malzeme Mesajları
+        public static string MgMalzemeDeleted="Seçili Malzeme ve alt işlemleri silindi";
     }
 }

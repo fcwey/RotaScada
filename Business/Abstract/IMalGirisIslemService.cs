@@ -14,7 +14,8 @@ namespace Business.Abstract
         IDataResult<MalGirisIslem> GetById(int malGirisIslemId);
         IDataResult<List<MalGirisIslem>> GetList();
         IDataResult<List<MalGirisIslemDto>> GetListByDto(int BolumId, int MgirisId);
-
+        IResult DeleteListByMgMalzemeId(int MalGMalzemeId);
+        IResult DeleteListByMGirisMgKayitId(int mgKayitId);
         IResult Add(MalGirisIslem malGirisIslem);
         IResult Delete(MalGirisIslem malGirisIslem);
         IResult Update(MalGirisIslem malGirisIslem);

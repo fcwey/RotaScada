@@ -12,5 +12,7 @@ namespace DataAccess.Abstract
     public interface IMalGirisIslemDal : IEntityRepository<MalGirisIslem>
     {
         List<MalGirisIslemDto> GetListByBolumDtos(int BolumId, int MgirisId);
+        void DeleteListByMGirisMalzemeId(int MgirisMalzemeId);
+        void DeleteListByMGirisMgKayitId(int MgirisKayitId);
     }
 }

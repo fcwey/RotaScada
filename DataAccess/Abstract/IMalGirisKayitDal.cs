@@ -10,5 +10,7 @@ namespace DataAccess.Abstract
 {
     public interface IMalGirisKayitDal : IEntityRepository<MalGirisKayit>
     {
+        bool MalzemeIsCorrect(int malGirisKayitId);
+        bool IslemIsCorrect(int malGirisKayitId);
     }
 }

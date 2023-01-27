@@ -37,6 +37,21 @@ namespace Business.Concrete
             return new SuccessResult(Messages.ServisDeleted);
         }
 
+        public IResult DeleteListByMGirisMgKayitId(int mgKayitId)
+        {
+            _malGirisIslemDal.DeleteListByMGirisMgKayitId(mgKayitId);
+            return new SuccessResult(Messages.ServisDeleted);
+        }
+
+        public IResult DeleteListByMgMalzemeId(int MalGMalzemeId)
+        {
+            //iş kuralı olabilir.
+            //malzemeye ait hiç işlem yoksa buraya girme gibi...
+          
+            _malGirisIslemDal.DeleteListByMGirisMalzemeId(MalGMalzemeId);
+            return new SuccessResult();
+        }
+
         public IDataResult<MalGirisIslem> GetById(int malGirisIslemId)
         {
             return new SuccessDataResult<MalGirisIslem>(_malGirisIslemDal.Get(p => p.Id == malGirisIslemId));
@@ -52,6 +67,8 @@ namespace Business.Concrete
         {
             return new SuccessDataResult<List<MalGirisIslemDto>>(_malGirisIslemDal.GetListByBolumDtos(BolumId,MgirisId).ToList());
         }
+
+       
 
         public IResult Update(MalGirisIslem malGirisIslem)
         {

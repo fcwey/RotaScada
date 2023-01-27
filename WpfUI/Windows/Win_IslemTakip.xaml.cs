@@ -32,7 +32,10 @@ namespace WpfUI.Windows
         }
         IServisService _servisService;
         IBolumService _bolumService;
-
+        private void CloseBtn_Click(object sender, RoutedEventArgs e)
+        {
+            Close();
+        }
         void loadServis()
         {
             List<Bolum> bolums = _bolumService.GetList().Data;
@@ -40,10 +43,7 @@ namespace WpfUI.Windows
             if (lbx.Items.Count > 0) lbx.SelectedIndex = 0;
         }
 
-        private void CloseBtn_Click(object sender, RoutedEventArgs e)
-        {
-            Close();
-        }
+      
         private void lbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             if (!(lbx.SelectedItems is null) && lbx.SelectedItems.Count > 0)  //seçilen item null değilse
