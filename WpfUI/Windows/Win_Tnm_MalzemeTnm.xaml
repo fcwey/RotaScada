@@ -190,25 +190,25 @@
         </Border>
         <!--Listview Sayfası-->
 
-        <ListView IsSynchronizedWithCurrentItem="True" Grid.Row="2" FontSize="14" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="0,0,0,0"  AlternationCount="2" Name="lvMalzemeDto" Grid.ColumnSpan="7" SelectionChanged="lvMalzemeDto_SelectionChanged">
+        <ListView  IsSynchronizedWithCurrentItem="True" Grid.Row="2" FontSize="14" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="0,0,0,0"  AlternationCount="2" Name="lvMalzemeDto" Grid.ColumnSpan="7" SelectionChanged="lvMalzemeDto_SelectionChanged">
             <ListView.View>
-                <GridView  >
+                <GridView   >
                     <!--<GridViewColumn Width="Auto"      DisplayMemberBinding="{Binding Id}">
                         <GridViewColumn.Header>
                             <Label Content="No" FontWeight="Bold"></Label>
                         </GridViewColumn.Header>
                     </GridViewColumn>-->
-                    <GridViewColumn Width="Auto"  DisplayMemberBinding="{Binding MGrupName}">
+                    <GridViewColumn Width="NaN"  DisplayMemberBinding="{Binding MGrupName}">
                         <GridViewColumn.Header>
                             <Label Content="Malzeme Grup Adı" FontWeight="Bold"></Label>
                         </GridViewColumn.Header>
                     </GridViewColumn>
-                    <GridViewColumn Width="Auto"  DisplayMemberBinding="{Binding MalzemeName}">
+                    <GridViewColumn Width="NaN"  DisplayMemberBinding="{Binding MalzemeName}">
                         <GridViewColumn.Header>
                             <Label Content="Malzeme Adı" FontWeight="Bold"></Label>
                         </GridViewColumn.Header>
                     </GridViewColumn>
-                    <GridViewColumn Width="Auto"  DisplayMemberBinding="{Binding MaxSertlik}">
+                    <GridViewColumn Width="NaN"  DisplayMemberBinding="{Binding MaxSertlik}">
                         <GridViewColumn.Header>
                             <Label Content="Max Sertlik" FontWeight="Bold"></Label>
                         </GridViewColumn.Header>

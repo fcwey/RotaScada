@@ -2,6 +2,7 @@
 using Business.Constants;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
+using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
 using Entities.Dtos;
 using System;
@@ -38,6 +39,12 @@ namespace Business.Concrete
         public IDataResult<List<AktifIslem>> GetList()
         {
             return new SuccessDataResult<List<AktifIslem>>(_aktifIslemDal.GetList().ToList());
+        }
+
+        public async Task<IDataResult<List<AktifIslemDetailDto>>> GetListAktifIslemDetailDtosAsync(int bolumId)
+        {
+            var list = await _aktifIslemDal.GetListAktifIslemDetailDtosAsync(bolumId);
+            return new SuccessDataResult<List<AktifIslemDetailDto>>(list.ToList());
         }
 
         public IDataResult<List<AktifIslemDto>> GetListDto()

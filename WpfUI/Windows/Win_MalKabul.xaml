@@ -6,7 +6,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfUI.Windows" xmlns:uc="clr-namespace:WpfUI"
         mc:Ignorable="d"
-      Title="Win_Page_MalKabul" Height="1000" Width="1000" WindowState="Maximized" ResizeMode="CanResize" WindowStartupLocation="CenterScreen" Background="Transparent" WindowStyle="None">
+      Title="Win_Page_MalKabul" Height="1000" Width="1000" WindowState="Maximized" ResizeMode="CanResize" WindowStartupLocation="CenterScreen" Background="Transparent" WindowStyle="None" Loaded="Window_Loaded">
     <Border BorderBrush="Black" BorderThickness="9" CornerRadius="0,9,0,0">
         <Grid Background="GhostWhite" MouseDown="Grid_MouseDown" >
             <Grid.RowDefinitions>
@@ -187,8 +187,8 @@
                                             <DataTemplate>
                                                 <!--<TextBlock Text="{Binding Name}" />-->
                                                 <StackPanel>
-                                                    <uc:Element Title="{Binding Name}"  GotFocus="AGotFocus"   IsActive="{Binding Path=IsSelected,
-                                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"  />
+                                                    <!--<uc:Element Title="{Binding Name}"  GotFocus="AGotFocus"   IsActive="{Binding Path=IsSelected,
+                                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"  />-->
                                                 </StackPanel>
 
                                             </DataTemplate>
@@ -207,11 +207,12 @@
                                     <Border Grid.Row="0">
                                         <Grid>
                                             <Grid.ColumnDefinitions>
-                                                <ColumnDefinition Width="390"/>
+                                                <ColumnDefinition Width="75"/>
+                                                <ColumnDefinition Width="315"/>
                                                 <ColumnDefinition/>
                                             </Grid.ColumnDefinitions>
                                             <!--Malzeme Bilgileri ilk yarım-->
-                                            <Border Grid.Column="0">
+                                            <Border Grid.Column="0" Grid.ColumnSpan="2">
                                                 <StackPanel  Orientation="Vertical">
                                                     <StackPanel VerticalAlignment="Top" Height="30" Orientation="Horizontal" Margin="5,15,0,10">
                                                         <Label  FontSize="13" Content="  Malzeme Standart No :"></Label>
@@ -242,7 +243,7 @@
                                                 </StackPanel>
                                             </Border>
                                             <!--Malzeme Bilgileri son yarım Ekle butonu falan-->
-                                            <Border  BorderThickness="0.4,0,0,0" BorderBrush="LightGray"  Grid.Column="1">
+                                            <Border  BorderThickness="0.4,0,0,0" BorderBrush="LightGray"  Grid.Column="2">
                                                 <StackPanel HorizontalAlignment="Center" Orientation="Vertical">
                                                     <StackPanel VerticalAlignment="Top" Height="30" Orientation="Horizontal" Margin="5,15,0,10">
                                                         <Label FontSize="13" Content="  Adet:"></Label>
@@ -591,7 +592,7 @@
                    HorizontalOffset="10"
                    VerticalOffset="10">
                     <Grid>
-                        <local:PopupUC x:Name="Header" Foreground="#E0FFFF"/>
+                        <!--<local:PopupUC x:Name="Header" Foreground="#E0FFFF"/>-->
                     </Grid>
                 </Popup>
             </Grid>

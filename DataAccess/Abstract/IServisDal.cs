@@ -13,5 +13,6 @@ namespace DataAccess.Abstract
     public interface IServisDal : IEntityRepository<Servis>
     {
         List<ServisDto> GetListServisDtos();
+        Task<List<ServisDto>> GetListServisDtoAsync();
     }
 }

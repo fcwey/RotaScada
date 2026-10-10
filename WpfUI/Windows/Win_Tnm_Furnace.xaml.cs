@@ -33,7 +33,7 @@ namespace WpfUI.Windows
 
             _furnaceService = new FurnaceManager(new EfFurnaceDal());
             _bolumService = new BolumManager(new EfBolumDal());
-            LoadIslem();
+           LoadIslem();
             List<Bolum> bolums = _bolumService.GetList().Data;
             cbxBolum.ItemsSource = bolums;
             cbxBolum.DisplayMemberPath = "Name";
@@ -61,10 +61,11 @@ namespace WpfUI.Windows
                 popup_uc.IsOpen = false;
             });
         }
-        void LoadIslem()
+        async void LoadIslem()
         {
             // List<Islem> islemler = _islemService.GetList().Data;
-            List<FurnaceDto> furnaces = _furnaceService.GetListDto().Data;
+            var list = await _furnaceService.GetListFurnaceDtosAsync();
+            List<FurnaceDto> furnaces = list.Data;
             lvMGrup.ItemsSource = furnaces;
            
         }
@@ -193,7 +194,7 @@ namespace WpfUI.Windows
 
         private void btnExit_Click(object sender, RoutedEventArgs e)
         {
-            Close();
+            //Close();
         }
     }
 }

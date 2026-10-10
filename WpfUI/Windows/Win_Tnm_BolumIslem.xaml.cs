@@ -34,8 +34,8 @@ namespace WpfUI.Windows
 
             _bolumIslemService = new BolumIslemManager(new EfBolumIslemDal());
             _bolumService = new BolumManager(new EfBolumDal());
-            LoadIslem();
-            lvMGrup.Items.Filter = VacumFilter;
+            loadBolum();
+           // LoadIslem();
         }
         //mouse sürükle
         private MouseButton _button;
@@ -58,42 +58,29 @@ namespace WpfUI.Windows
                 popup_uc.IsOpen = false;
             });
         }
-        private bool VacumFilter(object obj)
+        //private bool VacumFilter(object obj)
+        //{
+
+        //    var FilterObj = obj as BolumIslemDto;
+        //    //Listede kaç tane
+
+        //    return FilterObj.BolumName.Contains("Vakum Fırın", StringComparison.OrdinalIgnoreCase);
+        //}
+        //void LoadIslem()
+        //{
+        //    List<BolumIslemDto> islemler = _bolumIslemService.GetListBolumIslemDtos().Data;
+        //    lvMGrup.ItemsSource = islemler;
+        //}
+        void loadBolum()
         {
-
-            var FilterObj = obj as BolumIslemDto;
-            //Listede kaç tane
-
-            return FilterObj.BolumName.Contains("Vakum Fırın", StringComparison.OrdinalIgnoreCase);
+            List<Bolum> bolums = _bolumService.GetList().Data;
+            lbxBolum.ItemsSource = bolums;
+            if (lbxBolum.Items.Count > 0) lbxBolum.SelectedIndex = 0;
         }
-        private bool AthFilter(object obj)
+        async void LoadIslem(int bolumId)
         {
-
-            var FilterObj = obj as BolumIslemDto;
-            //Listede kaç tane
-
-            return FilterObj.BolumName.Contains("Atmosfer", StringComparison.OrdinalIgnoreCase);
-        }
-        private bool TuzFilter(object obj)
-        {
-
-            var FilterObj = obj as BolumIslemDto;
-            //Listede kaç tane
-
-            return FilterObj.BolumName.Contains("Tuz", StringComparison.OrdinalIgnoreCase);
-        }
-        private bool IndFilter(object obj)
-        {
-
-            var FilterObj = obj as BolumIslemDto;
-            //Listede kaç tane
-
-            return FilterObj.BolumName.Contains("İnduksiyon", StringComparison.OrdinalIgnoreCase);
-        }
-        void LoadIslem()
-        {
-            List<BolumIslemDto> islemler = _bolumIslemService.GetListBolumIslemDtos().Data;
-            lvMGrup.ItemsSource = islemler;
+            var list = await _bolumIslemService.GetListBolumIslemDtosAsync(bolumId);
+            lvMGrup.ItemsSource = list.Data;
         }
         void SetUpdateField()
         {
@@ -132,18 +119,18 @@ namespace WpfUI.Windows
                 string str = System.IO.Directory.GetCurrentDirectory();
                 string imagePath = str + "\\icon\\success.png";
 
-                Header.PopupText.Text = message;
-                Header.PopupText.Foreground = new SolidColorBrush(Colors.White);
-                Header.PopupImage.Source = new BitmapImage(new Uri(imagePath));
+                //Header.PopupText.Text = message;
+                //Header.PopupText.Foreground = new SolidColorBrush(Colors.White);
+                //Header.PopupImage.Source = new BitmapImage(new Uri(imagePath));
             }
             else
             {
                 string str = System.IO.Directory.GetCurrentDirectory();
                 string imagePath = str + "\\icon\\fail.png";
 
-                Header.PopupText.Text = "Başarısız: " + message;
-                Header.PopupText.Foreground = new SolidColorBrush(Colors.White);
-                Header.PopupImage.Source = new BitmapImage(new Uri(imagePath));
+                //Header.PopupText.Text = "Başarısız: " + message;
+                //Header.PopupText.Foreground = new SolidColorBrush(Colors.White);
+                //Header.PopupImage.Source = new BitmapImage(new Uri(imagePath));
 
 
             }
@@ -174,28 +161,28 @@ namespace WpfUI.Windows
                 //Yeni Kayıt
                 BolumIslem bolümIslem = new BolumIslem();
                 bolümIslem.BolumIslemi = tbxBolumIslemName.Text;
-                if (vacum.IsActive)
-                {
-                    bolümIslem.BolumId = 1;
-                }
-                else if (tuz.IsActive)
-                {
-                    bolümIslem.BolumId = 2;
-                }
-                else if (ind.IsActive)
-                {
-                    bolümIslem.BolumId = 3;
-                }
-                else if (ath.IsActive)
-                {
-                    bolümIslem.BolumId = 4;
-                }
-
+                //if (vacum.IsActive)
+                //{
+                //    bolümIslem.BolumId = 1;
+                //}
+                //else if (tuz.IsActive)
+                //{
+                //    bolümIslem.BolumId = 2;
+                //}
+                //else if (ind.IsActive)
+                //{
+                //    bolümIslem.BolumId = 3;
+                //}
+                //else if (ath.IsActive)
+                //{
+                //    bolümIslem.BolumId = 4;
+                //}
+                bolümIslem.BolumId = (lbxBolum.SelectedItem as Bolum).Id;
                 var result = _bolumIslemService.Add(bolümIslem);
                 CommandMessage(result.IsSuccess, result.Message);
                 if (result.IsSuccess)
                 {
-                    LoadIslem();
+                    LoadIslem((lbxBolum.SelectedItem as Bolum).Id);
                 }
             }
             else
@@ -208,7 +195,7 @@ namespace WpfUI.Windows
                 CommandMessage(result.IsSuccess, result.Message);
                 if (result.IsSuccess)
                 {
-                    LoadIslem();
+                    LoadIslem((lbxBolum.SelectedItem as Bolum).Id);
                 }
 
             }
@@ -225,7 +212,7 @@ namespace WpfUI.Windows
                 CommandMessage(result.IsSuccess, result.Message);
                 if (result.IsSuccess)
                 {
-                    LoadIslem();
+                    LoadIslem((lbxBolum.SelectedItem as Bolum).Id);
                 }
             }
         }
@@ -234,50 +221,49 @@ namespace WpfUI.Windows
         {
             Close();
         }
-        private void Vacum_ElementClick(object sender, RoutedEventArgs e)
+
+        //private void lbx_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        //{
+        //    if (!(lbx.SelectedItems is null) && lbx.SelectedItems.Count > 0)  //seçilen item null değilse
+        //    {
+        //        ;
+        //        //MessageBox.Show(_servis.Name.ToString());
+        //       // loadFurnaceListe((lbx.SelectedItem as Bolum).Id);
+        //    }
+        //}
+        private void AGotFocus(object sender, RoutedEventArgs e)
         {
-            if (!vacum.IsActive)
+            try
             {
-                vacum.IsActive = true;
-                tuz.IsActive = false;
-                ath.IsActive = false;
-                ind.IsActive = false;
-                lvMGrup.Items.Filter = VacumFilter;
+                FrameworkElement element = sender as FrameworkElement;
+                Bolum item = element.DataContext as Bolum;
+                if (item != null)
+                {
+                    lbxBolum.SelectedValue = item;
+                }
+            }
+            catch { }
+        }
+
+        private void lbxBolum_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            if (!(lbxBolum.SelectedItems is null) && lbxBolum.SelectedItems.Count > 0)  //seçilen item null değilse
+            {
+                LoadIslem((lbxBolum.SelectedItem as Bolum).Id);
             }
         }
-        private void Tuz_ElementClick(object sender, RoutedEventArgs e)
-        {
-            if (!tuz.IsActive)
-            {
-                vacum.IsActive = false;
-                tuz.IsActive = true;
-                ath.IsActive = false;
-                ind.IsActive = false;
-                lvMGrup.Items.Filter = TuzFilter;
-            }
-        }
-        private void Ind_ElementClick(object sender, RoutedEventArgs e)
-        {
-            if (!ind.IsActive)
-            {
-                vacum.IsActive = false;
-                tuz.IsActive = false;
-                ath.IsActive = false;
-                ind.IsActive = true;
-                lvMGrup.Items.Filter = IndFilter;
-            }
-        }
-        private void Ath_ElementClick(object sender, RoutedEventArgs e)
-        {
-            if (!ath.IsActive)
-            {
-                vacum.IsActive = false;
-                tuz.IsActive = false;
-                ath.IsActive = true;
-                ind.IsActive = false;
-                lvMGrup.Items.Filter = AthFilter;
-            }
-        }
+        //private void Vacum_ElementClick(object sender, RoutedEventArgs e)
+        //{
+        //    if (!vacum.IsActive)
+        //    {
+        //        vacum.IsActive = true;
+        //        tuz.IsActive = false;
+        //        ath.IsActive = false;
+        //        ind.IsActive = false;
+
+        //    }
+        //}
+
 
     }
 }

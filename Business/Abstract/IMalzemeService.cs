@@ -14,7 +14,7 @@ namespace Business.Abstract
         IDataResult<Malzeme> GetById(int malzemeId);
         IDataResult<MalzemeDto> GetDtoById(int malzemeId);
         IDataResult<List<Malzeme>> GetList();
-        
+
         IDataResult<List<MalzemeDto>> GetListMalzemeDtos();
         IResult Add(Malzeme malzeme);
         IResult Delete(Malzeme malzeme);

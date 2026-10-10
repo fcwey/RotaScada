@@ -1,16 +1,18 @@
-﻿<UserControl x:Class="WpfUI.Element"
+﻿<UserControl x:Class="WpfUI.Elements.Element"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
-             xmlns:local="clr-namespace:WpfUI"
+             xmlns:local="clr-namespace:WpfUI.Elements"
              mc:Ignorable="d" 
-             Name="element">
+             Name="element"
+             d:DesignHeight="50" d:DesignWidth="130">
 
-    <Button   Padding="5" Width="90" Margin="1 0" FocusVisualStyle="{x:Null}" Click="Button_Click"  >
+
+    <Button   Padding="5" Width="130" Margin="0 0" FocusVisualStyle="{x:Null}" Click="Button_Click"  >
         <Button.Style>
             <Style TargetType="Button">
-                <Setter Property="Height" Value="30"  />
+                <Setter Property="Height" Value="40"  />
                 <Setter Property="Foreground" Value="#E2E2E4" />
 
                 <Setter Property="Background">
@@ -34,15 +36,15 @@
 
                 <Style.Triggers>
                     <Trigger Property="IsMouseOver" Value="True">
-                        <Setter Property="Background" Value="#5F76F6" />
+                        <Setter Property="Background" Value="CadetBlue" />
                         <Setter Property="Foreground" Value="#ffffff" />
-                        <Setter Property="Height" Value="35" />
+                        <Setter Property="Height" Value="50" />
                     </Trigger>
 
                     <DataTrigger Binding="{Binding ElementName=element,Path=IsActive}" Value="True">
                         <Setter Property="Background" Value="#5F76F6" />
                         <Setter Property="Foreground" Value="#ffffff" />
-                        <Setter Property="Height" Value="35" />
+                        <Setter Property="Height" Value="55" />
                     </DataTrigger>
                 </Style.Triggers>
             </Style>
@@ -50,7 +52,7 @@
 
         <StackPanel VerticalAlignment="Center">
 
-            <TextBlock Text="{Binding ElementName=element,Path=Title}" FontSize="12" FontWeight="SemiBold" 
+            <TextBlock Text="{Binding ElementName=element,Path=Title}" FontSize="15" FontWeight="SemiBold" 
                        TextAlignment="Center" Margin="0 0 0 0"/>
         </StackPanel>
     </Button>

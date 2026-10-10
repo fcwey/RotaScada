@@ -59,15 +59,71 @@
 
         <!--Bölüm başlıkları-->
         <Grid x:Name="grid" Background="White" Margin="0,0,0,0" Grid.Row="1">
-            <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto" Padding="0 0" VerticalAlignment="Bottom" Width="{Binding ElementName=grid,Path=ActualWidth}">
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto" >
+                <ListBox Background="Transparent" BorderThickness="0" VirtualizingStackPanel.IsVirtualizing="False" Name="lbxBolum" SelectionChanged="lbxBolum_SelectionChanged"  >
+                    <ListBox.Resources>
+                        <Style TargetType="{x:Type ListBoxItem}">
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                        <Border x:Name="Bd"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            Background="{TemplateBinding Background}"
+                            Padding="{TemplateBinding Padding}"
+                            SnapsToDevicePixels="true">
+                                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                        </Border>
+                                        <ControlTemplate.Triggers>
+                                            <MultiTrigger>
+                                                <MultiTrigger.Conditions>
+                                                    <Condition Property="Selector.IsSelectionActive"
+                                            Value="False" />
+                                                    <Condition Property="IsSelected"
+                                            Value="True" />
+                                                </MultiTrigger.Conditions>
+                                                <Setter Property="Background"
+                                    TargetName="Bd"
+                                    Value="Transparent" />
+                                            </MultiTrigger>
+                                            <MultiTrigger>
+                                                <MultiTrigger.Conditions>
+                                                    <Condition Property="Selector.IsSelectionActive"
+                                            Value="True" />
+                                                    <Condition Property="IsSelected"
+                                            Value="True" />
+                                                </MultiTrigger.Conditions>
+                                                <Setter Property="Background"
+                                    TargetName="Bd"
+                                    Value="Transparent" />
+                                            </MultiTrigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </ListBox.Resources>
 
-                    <uc:Element x:Name="vacum" Title="Vakum Fırınları" IsActive="True" ElementClick="Vacum_ElementClick" VerticalAlignment="Bottom"/>
-                    <uc:Element x:Name="tuz" Title="Tuz Banyoları" ElementClick="Tuz_ElementClick"  VerticalAlignment="Bottom"/>
-                    <uc:Element x:Name="ind" Title="İnduksiyon" ElementClick="Ind_ElementClick" VerticalAlignment="Bottom"/>
-                    <uc:Element x:Name="ath" Title="Atmosfer Yagda" ElementClick="Ath_ElementClick" VerticalAlignment="Bottom"/>
+                    <ListBox.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel  />
+                        </ItemsPanelTemplate>
+                    </ListBox.ItemsPanel>
+                    <ListBox.ItemTemplate>
 
-                </StackPanel>
+                        <DataTemplate>
+                            <!--<TextBlock Text="{Binding Name}" />-->
+                            <StackPanel>
+                                <!--<uc:Element Title="{Binding Name}"  GotFocus="AGotFocus"   IsActive="{Binding Path=IsSelected,
+                                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"  />-->
+                            </StackPanel>
+
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+
+                </ListBox>
             </ScrollViewer>
         </Grid>
 
@@ -291,7 +347,7 @@
                    HorizontalOffset="10"
                    VerticalOffset="10">
                 <Grid>
-                    <local:PopupUC x:Name="Header" Foreground="#E0FFFF"/>
+                    <!--<local:PopupUC x:Name="Header" Foreground="#E0FFFF"/>-->
                 </Grid>
             </Popup>
         </Grid>

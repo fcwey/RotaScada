@@ -12,5 +12,6 @@ namespace DataAccess.Abstract
     {
         bool MalzemeIsCorrect(int malGirisKayitId);
         bool IslemIsCorrect(int malGirisKayitId);
+        Task UpdateForTakip(MalGirisKayit malGirisKayit);
     }
 }

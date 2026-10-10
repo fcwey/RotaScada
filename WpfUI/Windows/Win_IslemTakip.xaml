@@ -3,7 +3,9 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfUI.Windows" xmlns:uc="clr-namespace:WpfUI"
+        xmlns:local="clr-namespace:WpfUI.Windows"
+        xmlns:uc="clr-namespace:WpfUI.Elements"
+         xmlns:ucFurn="clr-namespace:WpfUI.Elements"
         mc:Ignorable="d"
         Title="Win_IslemTakip"  Height="1000" Width="1000" WindowState="Maximized" ResizeMode="CanResize" WindowStartupLocation="CenterScreen" Background="Transparent" WindowStyle="None">
     <Grid>
@@ -42,20 +44,22 @@
             <Grid>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition/>
-                    <ColumnDefinition Width="200"/>
+                    <ColumnDefinition Width="340"/>
                 </Grid.ColumnDefinitions>
                 <Border Grid.Column="0" Background="AliceBlue">
                     <Grid>
                         <Grid.RowDefinitions>
                             <RowDefinition Height="160"/>
-                            <RowDefinition Height="50"/>
+                            <RowDefinition Height="Auto"/>
                             <RowDefinition/>
+                            <RowDefinition Height="100"/>
                             <RowDefinition Height="100"/>
                         </Grid.RowDefinitions>
                         <!--bölümler tab menü vakum-tuz -ind  arama listeleme falan  -->
                         <Border Grid.Row="0" Margin="15,15,0,0">
                             <StackPanel Orientation="Vertical" >
                                 <StackPanel Orientation="Horizontal">
+                                    <!--Bölümler; vakum Tuz falan filan-->
                                     <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto" >
                                         <ListBox Background="Transparent" BorderThickness="0" VirtualizingStackPanel.IsVirtualizing="False" Name="lbx" SelectionChanged="lbx_SelectionChanged"   >
                                             <ListBox.Resources>
@@ -77,24 +81,18 @@
                                                                     <MultiTrigger>
                                                                         <MultiTrigger.Conditions>
                                                                             <Condition Property="Selector.IsSelectionActive"
-                                            Value="False" />
+                                                                                        Value="False" />
                                                                             <Condition Property="IsSelected"
-                                            Value="True" />
+                                                                                       Value="True" />
                                                                         </MultiTrigger.Conditions>
-                                                                        <Setter Property="Background"
-                                    TargetName="Bd"
-                                    Value="Transparent" />
+                                                                        <Setter Property="Background"  TargetName="Bd"  Value="Transparent" />
                                                                     </MultiTrigger>
                                                                     <MultiTrigger>
                                                                         <MultiTrigger.Conditions>
-                                                                            <Condition Property="Selector.IsSelectionActive"
-                                            Value="True" />
-                                                                            <Condition Property="IsSelected"
-                                            Value="True" />
+                                                                            <Condition Property="Selector.IsSelectionActive" Value="True" />
+                                                                            <Condition Property="IsSelected" Value="True" />
                                                                         </MultiTrigger.Conditions>
-                                                                        <Setter Property="Background"
-                                    TargetName="Bd"
-                                    Value="Transparent" />
+                                                                        <Setter Property="Background" TargetName="Bd" Value="Transparent" />
                                                                     </MultiTrigger>
                                                                 </ControlTemplate.Triggers>
                                                             </ControlTemplate>
@@ -105,16 +103,16 @@
 
                                             <ListBox.ItemsPanel>
                                                 <ItemsPanelTemplate>
-                                                    <WrapPanel  />
+                                                    <WrapPanel />
                                                 </ItemsPanelTemplate>
                                             </ListBox.ItemsPanel>
                                             <ListBox.ItemTemplate>
 
-                                                <DataTemplate>
+                                                <DataTemplate >
                                                     <!--<TextBlock Text="{Binding Name}" />-->
                                                     <StackPanel>
-                                                        <uc:Element Title="{Binding Name}"  GotFocus="AGotFocus"   IsActive="{Binding Path=IsSelected,
-                                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"  />
+                                                        <!--<uc:PaketElement   Title="{Binding Name}"  GotFocus="AGotFocus"   IsActive="{Binding Path=IsSelected,
+                                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"  />-->
                                                     </StackPanel>
 
                                                 </DataTemplate>
@@ -130,26 +128,75 @@
                             </StackPanel>
                         </Border>
                         <!--Başlıklar stok giriş, işlemdei kalite kontrol, stok çıkış, hepsi-->
-                        <Border Grid.Row="1"  Margin="15,15,0,0">
+                        <Border Grid.Row="1"  Margin="15,5,0,5">
                             <StackPanel Orientation="Vertical" >
                                 <StackPanel Orientation="Horizontal">
-                                    <ScrollViewer  VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto" Padding="0 0" VerticalAlignment="Top" Width="{Binding ElementName=grid,Path=ActualWidth}">
-                                        <StackPanel Name="stackislemAdd" Orientation="Horizontal"  HorizontalAlignment="Left" VerticalAlignment="Center" Margin="10,0,0,0">
+                                    <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto" >
+                                        <ListBox Background="Transparent" BorderThickness="0" VirtualizingStackPanel.IsVirtualizing="False" Name="lbxUnits" SelectionChanged="lbxUnits_SelectionChanged"   >
+                                            <ListBox.Resources>
+                                                <Style TargetType="{x:Type ListBoxItem}">
+                                                    <Setter Property="Template">
+                                                        <Setter.Value>
+                                                            <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                                <Border x:Name="Bdx"
+                                                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                                                        Background="{TemplateBinding Background}"
+                                                                        Padding="{TemplateBinding Padding}"
+                                                                        SnapsToDevicePixels="true">
+                                                                    <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                                </Border>
+                                                                <ControlTemplate.Triggers>
+                                                                    <MultiTrigger>
+                                                                        <MultiTrigger.Conditions>
+                                                                            <Condition Property="Selector.IsSelectionActive"
+                                                                                        Value="False" />
+                                                                            <Condition Property="IsSelected"
+                                                                                       Value="True" />
+                                                                        </MultiTrigger.Conditions>
+                                                                        <Setter Property="Background"  TargetName="Bdx"  Value="Transparent" />
+                                                                    </MultiTrigger>
+                                                                    <MultiTrigger>
+                                                                        <MultiTrigger.Conditions>
+                                                                            <Condition Property="Selector.IsSelectionActive" Value="True" />
+                                                                            <Condition Property="IsSelected" Value="True" />
+                                                                        </MultiTrigger.Conditions>
+                                                                        <Setter Property="Background" TargetName="Bdx" Value="Transparent" />
+                                                                    </MultiTrigger>
+                                                                </ControlTemplate.Triggers>
+                                                            </ControlTemplate>
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </Style>
+                                            </ListBox.Resources>
 
-                                            <uc:Element x:Name="stokGiris" Title="STOK-GİRİŞ" IsActive="True" VerticalAlignment="Bottom"/>
-                                            <uc:Element x:Name="islemde" Title="İŞLEMDE"   VerticalAlignment="Bottom"/>
-                                            <uc:Element x:Name="kaliteKontrol" Title="KALİTE KONTROL" VerticalAlignment="Bottom"/>
-                                            <uc:Element x:Name="stokCikis" Title="STOK-ÇIKIŞ"  VerticalAlignment="Bottom"/>
-                                            <uc:Element x:Name="hepsi" Title="HEPSİ"  VerticalAlignment="Bottom" />
+                                            <ListBox.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel/>
+                                                </ItemsPanelTemplate>
+                                            </ListBox.ItemsPanel>
+                                            <ListBox.ItemTemplate>
 
-                                        </StackPanel>
+                                                <DataTemplate>
+                                                    <!--<TextBlock Text="{Binding Name}" />-->
+                                                    <StackPanel>
+                                                        <!--<uc:Element Title="{Binding Name}"  GotFocus="AGotFocusUnit"   IsActive="{Binding Path=IsSelected,
+                                                              RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"  />-->
+                                                    </StackPanel>
+
+                                                </DataTemplate>
+                                            </ListBox.ItemTemplate>
+
+                                        </ListBox>
                                     </ScrollViewer>
                                 </StackPanel>
 
                             </StackPanel>
                         </Border>
                         <!--işlem Listesi-->
-                        <ListView Grid.Row="2"  FontSize="15" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="0,0,0,0"  AlternationCount="2" Name="lvMGrup" Grid.ColumnSpan="7" >
+                        <ListView Name="lvTakipListe" Grid.Row="2"  FontSize="15" ScrollViewer.CanContentScroll="True" ScrollViewer.VerticalScrollBarVisibility="Auto" ScrollViewer.HorizontalScrollBarVisibility="Auto" Margin="0,0,0,0"  AlternationCount="2"  Grid.ColumnSpan="7" >
                             <ListView.View>
                                 <GridView  >
                                     <!--<GridViewColumn Width="Auto"      DisplayMemberBinding="{Binding Id}">
@@ -157,36 +204,272 @@
                             <Label Content="No" FontWeight="Bold"></Label>
                         </GridViewColumn.Header>
                     </GridViewColumn>-->
-                                    <GridViewColumn Width="Auto"  DisplayMemberBinding="{Binding BolumName}">
+                                    <GridViewColumn Width="Auto"  DisplayMemberBinding="{Binding FirmaAdi}">
                                         <GridViewColumn.Header>
-                                            <Label Content="Bölüm Adı" FontWeight="Bold"></Label>
+                                            <Label Content="Firma Adı" FontWeight="Bold"></Label>
                                         </GridViewColumn.Header>
                                     </GridViewColumn>
-                                    <GridViewColumn Width="Auto"   DisplayMemberBinding="{Binding BolumIslemName}">
+                                    <GridViewColumn Width="Auto"   DisplayMemberBinding="{Binding GirisTarihi}">
                                         <GridViewColumn.Header>
-                                            <Label Content="Bölüm İşlem Adı" FontWeight="Bold"></Label>
+                                            <Label Content="Giriş Tarihi" FontWeight="Bold"></Label>
                                         </GridViewColumn.Header>
                                     </GridViewColumn>
-                                    <GridViewColumn Width="Auto"  DisplayMemberBinding="{Binding MGrupName}">
+                                    <GridViewColumn Width="Auto"  DisplayMemberBinding="{Binding MGrupAdi}">
                                         <GridViewColumn.Header>
                                             <Label Content="Malzeme Grup Adı" FontWeight="Bold"></Label>
                                         </GridViewColumn.Header>
                                     </GridViewColumn>
-                                    <GridViewColumn Width="Auto"  DisplayMemberBinding="{Binding Fiyati}">
+                                    <GridViewColumn Width="Auto"  DisplayMemberBinding="{Binding MalzemeAdi}">
                                         <GridViewColumn.Header>
-                                            <Label Content="Fiyat" FontWeight="Bold"></Label>
+                                            <Label Content="Malzeme Kodu" FontWeight="Bold"></Label>
                                         </GridViewColumn.Header>
+                                    </GridViewColumn>
+                                    <GridViewColumn Width="Auto"  DisplayMemberBinding="{Binding IstenenSertlik}">
+                                        <GridViewColumn.Header>
+                                            <Label Content="İstenen Sertlik" FontWeight="Bold"></Label>
+                                        </GridViewColumn.Header>
+                                    </GridViewColumn>
+                                    <GridViewColumn Width="Auto"  DisplayMemberBinding="{Binding Agirlik}">
+                                        <GridViewColumn.Header>
+                                            <Label Content="Ağırlık" FontWeight="Bold"></Label>
+                                        </GridViewColumn.Header>
+                                    </GridViewColumn>
+                                    <GridViewColumn Width="Auto"  DisplayMemberBinding="{Binding Adet}">
+                                        <GridViewColumn.Header>
+                                            <Label Content="Adet" FontWeight="Bold"></Label>
+                                        </GridViewColumn.Header>
+                                    </GridViewColumn>
+                                    <GridViewColumn Width="Auto"  DisplayMemberBinding="{Binding Durum}">
+                                        <GridViewColumn.Header>
+                                            <Label Content="Durum" FontWeight="Bold"></Label>
+                                        </GridViewColumn.Header>
+                                    </GridViewColumn>
+                                    <GridViewColumn Width="Auto"  DisplayMemberBinding="{Binding Nerede}">
+                                        <GridViewColumn.Header>
+                                            <Label Content="Bulunduğu Yer" FontWeight="Bold"></Label>
+                                        </GridViewColumn.Header>
+                                    </GridViewColumn>
+                                    <GridViewColumn Width="Auto"  DisplayMemberBinding="{Binding IslemBaslik}">
+                                        <GridViewColumn.Header>
+                                            <Label Content="İşlem Adı" FontWeight="Bold"></Label>
+                                        </GridViewColumn.Header>
+                                    </GridViewColumn>
+                                    <GridViewColumn  Width="Auto"  >
+                                        <GridViewColumn.Header>
+                                            <Label Content="Seç" FontWeight="Bold"></Label>
+                                        </GridViewColumn.Header>
+                                        <GridViewColumn.CellTemplate>
+                                            <DataTemplate>
+                                                <!--<CheckBox IsChecked="{Binding RelativeSource={RelativeSource AncestorType={x:Type ListViewItem}}, Mode=TwoWay, Path=IsSelected}" />-->
+                                                <CheckBox x:Name="ckbReferralIsChecked" Content="{Binding Value}" IsChecked="{Binding IsSelected}"
+                                                          Command="{Binding DataContext.CheckBoxIsChecked, RelativeSource={RelativeSource AncestorType=ListView}}" 
+                                                          CommandParameter="{Binding}">
+                                                </CheckBox>
+                                            </DataTemplate>
+                                        </GridViewColumn.CellTemplate>
                                     </GridViewColumn>
 
                                 </GridView>
                             </ListView.View>
                         </ListView>
                         <!--planlama ekranı-->
+                        <Border Background="White" Margin="0,0,0,0" Grid.Row="3">
+                            <StackPanel HorizontalAlignment="Center" Orientation="Vertical" VerticalAlignment="Center" Margin="0,0,0,0">
 
+                                <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                    <Button Name="btnYeni"   Margin="5,0,0,0" Grid.Row="1" Height="40" Width="85" Click="btnYeni_Click">
+                                        <Button.Resources>
+                                            <Style TargetType="{x:Type Border}">
+                                                <Setter Property="CornerRadius" Value="7,0,0,7"/>
+                                            </Style>
+                                        </Button.Resources>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Viewbox Margin="-5,0,0,0" Width="30" Height="30" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform">
+                                                <Canvas Width="13.229166" Height="13.229167">
+                                                    <Canvas.RenderTransform>
+                                                        <TranslateTransform X="0" Y="0"/>
+                                                    </Canvas.RenderTransform>
+                                                    <Canvas.Resources/>
+                                                    <!--Unknown tag: sodipodi:namedview-->
+                                                    <!--Unknown tag: metadata-->
+                                                    <Canvas >
+                                                        <Polygon xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Points="321.055,82.36 327.055,82.36 327.055,78.36 321.055,78.36 321.055,72.36 317.055,72.36 317.055,78.36 311.055,78.36 311.055,82.36 317.055,82.36 317.055,88.36 321.055,88.36 " Name="polygon260" FillRule="NonZero" Fill="#FF07A000">
+                                                            <Polygon.RenderTransform>
+                                                                <MatrixTransform Matrix="0.54511253 0 0 0.54511253 -167.18819 -37.308778"/>
+                                                            </Polygon.RenderTransform>
+                                                        </Polygon>
+                                                    </Canvas>
+                                                </Canvas>
+                                            </Viewbox>
+                                            <Label FontSize="15" VerticalAlignment="Center"  Padding="0" Content="Yeni"></Label>
+                                        </StackPanel>
+
+
+                                    </Button>
+                                    <Button  Name="btnKaydet"  Margin="20,0,0,0" Grid.Row="1" Height="40" Width="95" Click="btnKaydet_Click">
+                                        <StackPanel Orientation="Horizontal">
+                                            <Viewbox Margin="-3,0,0,0" Width="30" Height="30" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform">
+                                                <Canvas Width="13.229166" Height="13.229167">
+                                                    <Canvas.RenderTransform>
+                                                        <TranslateTransform X="0" Y="0"/>
+                                                    </Canvas.RenderTransform>
+                                                    <Canvas.Resources/>
+                                                    <!--Unknown tag: sodipodi:namedview-->
+                                                    <!--Unknown tag: metadata-->
+                                                    <Canvas >
+                                                        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path84" Fill="#FF007ACC" StrokeThickness="0.585876">
+                                                            <Path.Data>
+                                                                <PathGeometry Figures="M 10.185684 4.6457637 8.3343142 2.8705576 9.1193887 2.1206354 10.970759 3.9134178 Z M 5.0944164 9.7018786 3.3719392 7.9794014 7.7660137 3.4740104 9.6701128 5.1437587 Z m -2.32593 0.6034534 V 8.5652781 l 1.7400535 1.7400539 z" FillRule="EvenOdd"/>
+                                                            </Path.Data>
+                                                        </Path>
+                                                    </Canvas>
+                                                </Canvas>
+                                            </Viewbox>
+                                            <Label x:Name="LabelKaydet" FontSize="15" VerticalAlignment="Center" Padding="0" Content="Kaydet"></Label>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Name="btnSil"  Margin="20,0,0,0" Grid.Row="1" Height="40" Width="95" Click="btnSil_Click" >
+                                        <StackPanel Orientation="Horizontal">
+                                            <Viewbox Margin="-3,0,0,0" Width="30" Height="30" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform">
+                                                <Canvas Width="13.229166" Height="13.229167">
+                                                    <Canvas.RenderTransform>
+                                                        <TranslateTransform X="0" Y="0"/>
+                                                    </Canvas.RenderTransform>
+                                                    <Canvas.Resources/>
+                                                    <!--Unknown tag: sodipodi:namedview-->
+                                                    <!--Unknown tag: metadata-->
+                                                    <Canvas Name="layerl1">
+                                                        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path206" Fill="#FFD8210D" StrokeThickness="0.571688">
+                                                            <Path.Data>
+                                                                <PathGeometry Figures="M 8.0319945 2.6127604 V 2.0410715 H 5.1735492 V 2.6127604 H 2.3151042 V 3.7561385 H 10.890439 V 2.6127604 Z m -5.1452014 1.715067 v 5.1452005 c 0 0.9490041 0.7660633 1.7150671 1.715067 1.7150671 h 4.0018234 c 0.949003 0 1.7150665 -0.766063 1.7150665 -1.7150671 V 4.3278274 H 9.1753725 v 5.1452005 c 0 0.31443 -0.25726 0.5716901 -0.571689 0.5716901 H 4.6018601 c -0.3144289 0 -0.5716889 -0.2572601 -0.5716889 -0.5716901 V 4.3278274 Z m 1.715067 0.5716891 V 9.4730279 H 5.1735492 V 4.8995165 Z m 1.143378 0 v 4.5735114 h 0.571689 V 4.8995165 Z m 1.1433781 0 V 9.4730279 H 7.4603055 V 4.8995165 Z m 1.1433783 0 v 4.5735114 h 0.571689 V 4.8995165 Z" FillRule="EvenOdd"/>
+                                                            </Path.Data>
+                                                        </Path>
+                                                    </Canvas>
+                                                </Canvas>
+                                            </Viewbox>
+                                            <Label FontSize="15" VerticalAlignment="Center" Padding="0" Content=" Sil"></Label>
+                                        </StackPanel>
+                                    </Button>
+                                    <Button Name="btnExit" BorderBrush="#EF9999" Margin="20,0,0,0" Grid.Row="1" Height="40" Width="85"  Background="#E47474" Click="btnExit_Click">
+                                        <Button.Resources>
+                                            <Style TargetType="{x:Type Border}">
+                                                <Setter Property="CornerRadius" Value="0,7,7,0"/>
+                                            </Style>
+                                        </Button.Resources>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Viewbox Width="25" Height="25" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform">
+                                                <Canvas Width="13.229166" Height="13.229167">
+                                                    <Canvas.RenderTransform>
+                                                        <TranslateTransform X="0" Y="0"/>
+                                                    </Canvas.RenderTransform>
+                                                    <Canvas.Resources/>
+                                                    <!--Unknown tag: sodipodi:namedview-->
+                                                    <!--Unknown tag: metadata-->
+                                                    <Canvas >
+                                                        <Path xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" Name="path52" Fill="White" StrokeThickness="0.61776">
+                                                            <Path.Data>
+                                                                <PathGeometry Figures="M 7.3663172 6.4158114 V 2.0914853 h -1.235523 v 4.3243261 z m -4.9420881 0.617761 c 0 2.3907347 1.9335911 4.3243256 4.3243261 4.3243256 2.390735 0 4.3243268 -1.9335909 4.3243268 -4.3243256 0 -1.7235528 -1.013128 -3.2123565 -2.4710448 -3.9104263 v 1.4393827 c 0.747491 0.5621625 1.235523 1.4579157 1.235523 2.4710436 0 1.7050197 -1.383785 3.0888046 -3.088805 3.0888046 -1.70502 0 -3.0888045 -1.3837849 -3.0888045 -3.0888046 0 -1.0131279 0.4880315 -1.9088811 1.2355215 -2.4710436 V 3.1231461 C 3.4373568 3.8212159 2.4242291 5.3100196 2.4242291 7.0335724 Z" FillRule="EvenOdd"/>
+                                                            </Path.Data>
+                                                        </Path>
+                                                    </Canvas>
+                                                </Canvas>
+                                            </Viewbox>
+                                            <Label FontSize="15" VerticalAlignment="Center" Padding="0" Content="Çıkış"></Label>
+                                        </StackPanel>
+
+                                    </Button>
+
+                                </StackPanel>
+                            </StackPanel>
+                        </Border>
                     </Grid>
 
                 </Border>
-                <Border Grid.Column="1" Background="Firebrick">
+                <Border Grid.Column="1" Background="AliceBlue">
+                    <StackPanel VerticalAlignment="Top" Orientation="Vertical" >
+                        <StackPanel Margin="20"  Orientation="Vertical"  Height="auto">
+                            <TextBlock Margin="15" Foreground="Black" FontSize="20" Text="BOŞALTMA ALANI"></TextBlock>
+                        </StackPanel>
+                        <StackPanel  Margin="5">
+                            <TextBlock  Margin="50,2" Foreground="Black" FontSize="20" Text="FIRIN LİSTESİ"></TextBlock>
+                            <Border Background="Black" Width="auto" Height="2"></Border>
+                            <ScrollViewer  BorderThickness="0" Background="Transparent" BorderBrush="Transparent" VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto" >
+
+                                
+                                <ListBox VirtualizingStackPanel.IsVirtualizing="False" BorderThickness="0"  Background="Transparent" Name="lbfurnace"   >
+                                   
+                                    <ListBox.Resources>
+                                        <Style TargetType="{x:Type ListBoxItem}">
+                                            <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick" />
+                                            <!--Handler="ListBoxItem_MouseDoubleClick"-->
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="{x:Type ListBoxItem}">
+                                                        <Border x:Name="Bd"
+                                                            BorderBrush="{TemplateBinding BorderBrush}"
+                                                            BorderThickness="{TemplateBinding BorderThickness}"
+                                                            Background="{TemplateBinding Background}"
+                                                            Padding="{TemplateBinding Padding}"
+                                                            SnapsToDevicePixels="true">
+                                                            <ContentPresenter HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                                            SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}"
+                                                                            VerticalAlignment="{TemplateBinding VerticalContentAlignment}" />
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <MultiTrigger>
+                                                                <MultiTrigger.Conditions>
+                                                                    <Condition Property="Selector.IsSelectionActive"
+                                                                           Value="False" />
+                                                                    <Condition Property="IsSelected"
+                                                                           Value="True" />
+                                                                </MultiTrigger.Conditions>
+                                                                <Setter Property="Background"
+                                                                    TargetName="Bd"
+                                                                    Value="Transparent" />
+                                                            </MultiTrigger>
+                                                            <MultiTrigger>
+                                                                <MultiTrigger.Conditions>
+                                                                    <Condition Property="Selector.IsSelectionActive"
+                                                                            Value="True" />
+                                                                    <Condition Property="IsSelected"
+                                                                            Value="True" />
+                                                                </MultiTrigger.Conditions>
+                                                                <Setter Property="Background"
+                                                                    TargetName="Bd"
+                                                                    Value="Transparent" />
+                                                            </MultiTrigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ListBox.Resources>
+
+                                    <ListBox.ItemsPanel>
+                                        <ItemsPanelTemplate>
+                                            <WrapPanel Orientation="Vertical" />
+                                        </ItemsPanelTemplate>
+                                    </ListBox.ItemsPanel>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate>
+                                            <!--<TextBlock Text="{Binding Name}" />-->
+                                            <StackPanel>
+                                                <ucFurn:FurnaceElement2  Title="{Binding FurnaceName}" IslemName="{Binding IslemAdı}" Status="{Binding Status}" Adet="{Binding Adet}" Kg="{Binding Kg}" GotFocus="frnAGotFocus"   IsActive="{Binding Path=IsSelected,
+                                    RelativeSource={RelativeSource FindAncestor, AncestorType={x:Type ListBoxItem}}}"  />
+                                            </StackPanel>
+
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                    <!--<ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <EventSetter Event="MouseDoubleClick" Handler="ListBoxItem_MouseDoubleClick"/>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>-->
+                                </ListBox>
+                            </ScrollViewer>
+                        </StackPanel>
+                    </StackPanel>
+                    
 
                 </Border>
             </Grid>

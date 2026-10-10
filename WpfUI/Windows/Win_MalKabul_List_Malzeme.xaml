@@ -27,9 +27,6 @@
         </Grid.RowDefinitions>
         <Border Background="Firebrick"  Margin="0,0,0,0" Grid.Row="0" CornerRadius="0,14,0,0" Loaded="Border_Loaded" >
             <Grid>
-
-
-
                 <StackPanel  HorizontalAlignment="Left" Margin="0,0,0,0" Orientation="Horizontal">
                     <Viewbox Width="22" Height="20" xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" Stretch="Uniform">
                         <Canvas Width="13.229166" Height="13.229167">

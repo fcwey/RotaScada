@@ -14,6 +14,7 @@ namespace Business.Abstract
         IDataResult<AktifIslem> GetById(int islemId);
         IDataResult<List<AktifIslem>> GetList();
         IDataResult<List<AktifIslemDto>> GetListDto();
+        Task<IDataResult<List<AktifIslemDetailDto>>> GetListAktifIslemDetailDtosAsync(int bolumId);
         IResult Add(AktifIslem aktifIslem);
         IResult Delete(AktifIslem aktifIslem);
         IResult Update(AktifIslem aktifIslem);

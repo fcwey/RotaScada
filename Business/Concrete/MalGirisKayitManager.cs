@@ -3,6 +3,7 @@ using Business.Constants;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
+using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
 using Entities.Dtos;
 using FluentValidation;
@@ -71,19 +72,36 @@ namespace Business.Concrete
             return new SuccessDataResult<List<MalGirisKayit>>(_malGirisKayitDal.GetList().ToList());
         }
 
-
-
-        public IResult Update(MalGirisKayit malGirisKayit)
+        public async Task<IResult> UpdateForTakip(MalGirisKayit malGirisKayit)
         {
-            IResult result = BusinessRules.Run(CheckIfMalGirisKayitNotFound(malGirisKayit.Id), CheckIfMalGirisKayitIsCorrect(malGirisKayit.Id));
+            IResult result = BusinessRules.Run( CheckIfMalGirisKayitIsCorrect(malGirisKayit.Id));
 
             if (result != null)
             {
                 return result;
             }
-            _malGirisKayitDal.Update(malGirisKayit);
+            await _malGirisKayitDal.UpdateForTakip(malGirisKayit);
             return new SuccessResult(Messages.MalGirisKayitUpdated);
         }
+
+
+        public IResult Update(MalGirisKayit malGirisKayit)
+        {
+            IResult result = BusinessRules.Run( CheckIfMalGirisKayitIsCorrect(malGirisKayit.Id));
+
+            if (result != null)
+            {
+                return result;
+            }
+         
+
+
+            _malGirisKayitDal.Update(malGirisKayit);
+
+            return new SuccessResult(Messages.MalGirisKayitUpdated);
+        }
+        //Update + adım ekler
+        //sadece update yapar
 
 
         //İş Kuralları
@@ -105,7 +123,7 @@ namespace Business.Concrete
         private IResult CheckIfMalGirisKayitNotFound(int Id)
         {
             var result = _malGirisKayitDal.GetList(p => p.Id == Id).Any();
-            if (result)
+            if (!result)
             {
                 return new ErrorResult(Messages.MalKayitNotFound);
             }
@@ -127,15 +145,7 @@ namespace Business.Concrete
             }
             return new SuccessResult();
         }
-        private IResult CheckIfMalGirisKayitEmptyData(MalGirisKayit malGirisKayit)
-        {
-            var emptyDataResult = _malGirisKayitDal.GetList(p => p.FirmaId == null && p.UserId == malGirisKayit.UserId).Any();
-            if (emptyDataResult)
-            {
-                return new ErrorResult(Messages.MalKayitNotFound);
-            }
-            return new SuccessResult();
-        }
+        
 
     }
 }

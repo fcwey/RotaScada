@@ -12,5 +12,6 @@ namespace DataAccess.Abstract
     public interface IAktifIslemDal : IEntityRepository<AktifIslem>
     {
         List<AktifIslemDto> GetListAktifIslemDtos();
+        Task<List<AktifIslemDetailDto>> GetListAktifIslemDetailDtosAsync(int bolumId);
     }
 }

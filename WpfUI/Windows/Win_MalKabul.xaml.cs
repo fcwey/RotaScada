@@ -1,5 +1,6 @@
 ﻿using Business.Abstract;
 using Business.Concrete;
+using Business.Constants;
 using Castle.Core.Internal;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
@@ -48,9 +49,16 @@ namespace WpfUI.Windows
             _bolumIslemService = new BolumIslemManager(new EfBolumIslemDal());
             _fiyatService = new FiyatManager(new EfFiyatDal());
 
+            _islemTakipService=new IslemTakipManager(new EfIslemTakipDal());
+
             _bolumService = new BolumManager(new EfBolumDal());
             loadServis();
-             
+           
+
+        }
+        private void Window_Loaded(object sender, RoutedEventArgs e)
+        {
+            malgirisKayit();
         }
 
         private Timer m_toolTipClosingTimer;
@@ -71,19 +79,26 @@ namespace WpfUI.Windows
         IMalGirisMalzemeService _malGirisMalzemeService;
         IMalGirisIslemService _malGirisIslemService;
 
+
+
         IBolumIslemService _bolumIslemService;
         IFiyatService _fiyatService;
+        IIslemTakipService _islemTakipService;
         void malgirisKayit()
         {
-            MalGirisKayit girisKayit = new MalGirisKayit();
-            girisKayit.UserId = 1;
-            var result = _malGirisKayitService.Add(girisKayit);
-            CommandMessage(result.IsSuccess, result.Message);
-            if (result.IsSuccess)
+            if (_selectedMalGirisKayit==null)
             {
-                _selectedMalGirisKayit = girisKayit;
-                 MessageBox.Show(girisKayit.Id.ToString());
+                MalGirisKayit girisKayit = new MalGirisKayit();
+                girisKayit.UserId = 1;
+                var result = _malGirisKayitService.Add(girisKayit);
+                CommandMessage(result.IsSuccess, result.Message);
+                if (result.IsSuccess)
+                {
+                    _selectedMalGirisKayit = girisKayit;
+                    MessageBox.Show(girisKayit.Id.ToString());
+                }
             }
+           
 
         }
         private void ToolTipClosingCallBack(object p_useless)
@@ -141,18 +156,18 @@ namespace WpfUI.Windows
                 string str = System.IO.Directory.GetCurrentDirectory();
                 string imagePath = str + "\\icon\\success.png";
 
-                Header.PopupText.Text = message;
-                Header.PopupText.Foreground = new SolidColorBrush(Colors.White);
-                Header.PopupImage.Source = new BitmapImage(new Uri(imagePath));
+                ////Header.PopupText.Text = message;
+                ////Header.PopupText.Foreground = new SolidColorBrush(Colors.White);
+                ////Header.PopupImage.Source = new BitmapImage(new Uri(imagePath));
             }
             else
             {
                 string str = System.IO.Directory.GetCurrentDirectory();
                 string imagePath = str + "\\icon\\fail.png";
 
-                Header.PopupText.Text = "Başarısız: " + message;
-                Header.PopupText.Foreground = new SolidColorBrush(Colors.White);
-                Header.PopupImage.Source = new BitmapImage(new Uri(imagePath));
+                //Header.PopupText.Text = "Başarısız: " + message;
+                //Header.PopupText.Foreground = new SolidColorBrush(Colors.White);
+                //Header.PopupImage.Source = new BitmapImage(new Uri(imagePath));
 
 
             }
@@ -175,22 +190,23 @@ namespace WpfUI.Windows
 
         }
 
-        private void btnKaydet_Click(object sender, RoutedEventArgs e)
+        private async void btnKaydet_Click(object sender, RoutedEventArgs e)
         {
             if (_selectedMalGirisKayit != null)
             {
                 MalGirisKayit kayit = new MalGirisKayit();
                 kayit = _selectedMalGirisKayit;
                 kayit.FirmaId = _selectedMusteri.Id;
+                kayit.Status = 1;//onaylanmamış kayıt
+
                 // kayit.GirisTarihi
                 //kayit.TeslimTarihi
                 // kayit.UserId
-                var result = _malGirisKayitService.Update(kayit);
+                var result = await _malGirisKayitService.UpdateForTakip(kayit);
                 CommandMessage(result.IsSuccess, result.Message);
                 if (result.IsSuccess)
                 {
                     MessageBox.Show(result.Message);
-
                 }
             }
             else
@@ -204,7 +220,10 @@ namespace WpfUI.Windows
         public string filterchar;
         private void txtFirmaName_KeyDown(object sender, KeyEventArgs e)
         {
-            
+            //if (_selectedMalGirisKayit == null)
+            //{
+            //    malgirisKayit();
+            //}
             e.Handled = true;
             filterchar = e.Key.ToString();
             Win_MalKabul_List_Musteri window = new Win_MalKabul_List_Musteri(this);
@@ -217,10 +236,10 @@ namespace WpfUI.Windows
 
         private void btnSelect_Click(object sender, RoutedEventArgs e)
         {
-            if (_selectedMalGirisKayit==null)
-            {
-                malgirisKayit();
-            }
+            //if (_selectedMalGirisKayit==null)
+            //{
+            //    malgirisKayit();
+            //}
            
             Win_MalKabul_List_Musteri window = new Win_MalKabul_List_Musteri(this);
             //winGrid.Effect = new BlurEffect();
@@ -449,5 +468,7 @@ namespace WpfUI.Windows
             }
             catch { }
         }
+
+        
     }
 }

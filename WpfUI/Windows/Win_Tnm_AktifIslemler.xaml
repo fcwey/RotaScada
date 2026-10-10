@@ -3,7 +3,7 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WpfUI.Windows" xmlns:uc="clr-namespace:WpfUI"
+        xmlns:local="clr-namespace:WpfUI.Windows" xmlns:uc="clr-namespace:WpfUI.Elements"
         mc:Ignorable="d"
    Title="Windowup" Height="650" Width="550" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="Transparent" WindowStyle="None">
     <Grid MouseDown="Grid_MouseDown">
@@ -350,7 +350,7 @@
                    HorizontalOffset="10"
                    VerticalOffset="10">
                 <Grid>
-                    <local:PopupUC x:Name="Header" Foreground="#E0FFFF"/>
+                    <!--<local:PopupUC x:Name="Header" Foreground="#E0FFFF"/>-->
                 </Grid>
             </Popup>
         </Grid>

@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:WpfUI.Windows"
         mc:Ignorable="d"
-     Title="WindowMGrup" Height="550" Width="600" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="Transparent" WindowStyle="None">
+     Title="WindowMGrup" Height="550" Width="Auto" ResizeMode="NoResize" WindowStartupLocation="CenterScreen" Background="Transparent" WindowStyle="None">
     <Grid>
         <Grid.ColumnDefinitions>
             <ColumnDefinition/>

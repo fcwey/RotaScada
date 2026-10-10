@@ -63,10 +63,10 @@
             <ScrollViewer VerticalScrollBarVisibility="Hidden" HorizontalScrollBarVisibility="Auto" Padding="0 0" VerticalAlignment="Bottom" Width="{Binding ElementName=grid,Path=ActualWidth}">
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
 
-                    <uc:Element x:Name="vacum" Title="Vakum Fırınları" IsActive="True" VerticalAlignment="Bottom" ElementClick="Vacum_ElementClick"/>
+                    <!--<uc:MainWindow x:Name="vacum" Title="Vakum Fırınları" IsActive="True" VerticalAlignment="Bottom" ElementClick="Vacum_ElementClick"/>
                     <uc:Element x:Name="tuz" Title="Tuz Banyoları"  VerticalAlignment="Bottom" ElementClick="Tuz_ElementClick"/>
                     <uc:Element x:Name="ind" Title="İnduksiyon" VerticalAlignment="Bottom" ElementClick="Ind_ElementClick"/>
-                    <uc:Element x:Name="ath" Title="Atmosfer Yagda" VerticalAlignment="Bottom" ElementClick="Ath_ElementClick"/>
+                    <uc:Element x:Name="ath" Title="Atmosfer Yagda" VerticalAlignment="Bottom" ElementClick="Ath_ElementClick"/>-->
 
                 </StackPanel>
             </ScrollViewer>
@@ -304,7 +304,7 @@
                    HorizontalOffset="10"
                    VerticalOffset="10">
                 <Grid>
-                    <local:PopupUC x:Name="Header" Foreground="#E0FFFF"/>
+                    <!--<local:PopupUC x:Name="Header" Foreground="#E0FFFF"/>-->
                 </Grid>
             </Popup>
         </Grid>

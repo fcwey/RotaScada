@@ -14,6 +14,7 @@ namespace Business.Abstract
         IDataResult<Servis> GetById(int servisId);
         IDataResult<List<Servis>> GetList();
         IDataResult<List<ServisDto>> GetListDto();
+        Task<IDataResult<List<ServisDto>>> GetListDtosAsync();
         Result ServisExist(Servis servis);
         IResult Add(Servis servis);
         IResult Delete(Servis servis);

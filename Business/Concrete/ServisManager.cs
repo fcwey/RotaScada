@@ -3,6 +3,7 @@ using Business.Constants;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
+using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
 using Entities.Dtos;
 using System;
@@ -51,6 +52,12 @@ namespace Business.Concrete
         public IDataResult<List<ServisDto>> GetListDto()
         {
             return new SuccessDataResult<List<ServisDto>>(_servisDal.GetListServisDtos());
+        }
+
+        public async Task<IDataResult<List<ServisDto>>> GetListDtosAsync()
+        {
+            var list = await _servisDal.GetListServisDtoAsync();
+            return new SuccessDataResult<List<ServisDto>>(list.ToList());
         }
 
         public Result ServisExist(Servis servis)

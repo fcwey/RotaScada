@@ -15,6 +15,9 @@ namespace Business.Abstract
         IDataResult<List<Furnace>> GetList();
         IDataResult<List<FurnaceDto>> GetListByBolumId(int bolumId);
         IDataResult<List<FurnaceDto>> GetListDto();
+        Task<IDataResult<List<FurnaceDto>>> GetListFurnaceDtosAsync();
+        Task<IDataResult<List<FurnaceDetailDto>>> GetListFurnaceDetailDtosAsync();
+        Task<IDataResult<List<FurnaceDetailDto>>> GetListFurnaceDetailDtosAsync(int bolumId);
         IResult Add(Furnace aktifIslem);
         IResult Delete(Furnace aktifIslem);
         IResult Update(Furnace aktifIslem);

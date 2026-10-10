@@ -4,15 +4,27 @@
              xmlns:local="clr-namespace:WpfUI"
              StartupUri="MainWindow.xaml">
     <Application.Resources>
-
         <ResourceDictionary>
+            <!-- Tile-style layout-->
+            <DataTemplate x:Key="ExplorerView">
+                <Border BorderThickness="3" BorderBrush="LightGray">
+                    <StackPanel Background="LightGray" Width="150" Height="50">
+                        <TextBlock Text="{Binding IslemName}" FontSize="14" HorizontalAlignment="Left"  />
+                        <!--<TextBlock Text="{Binding Auftrag}" FontSize="18" HorizontalAlignment="Left"  />-->
+                        <!--<TextBlock Text="{Binding Material}" FontSize="9" HorizontalAlignment="Left"  />
+                        <TextBlock Text="{Binding Type}" FontSize="9" HorizontalAlignment="Left"  />-->
+                    </StackPanel>
+                </Border>
+            </DataTemplate>
+        <!--</ResourceDictionary>-->
+        <!--<ResourceDictionary>-->
 
             <ResourceDictionary.MergedDictionaries>
-
-
                 <ResourceDictionary Source="Templates.xaml" />
-
+                <ResourceDictionary Source="Assets/icon.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            
         </ResourceDictionary>
+        
     </Application.Resources>
 </Application>

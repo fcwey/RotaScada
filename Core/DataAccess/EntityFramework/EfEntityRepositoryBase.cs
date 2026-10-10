@@ -13,6 +13,11 @@ namespace Core.DataAccess.EntityFramework
         where TEntity : class, IEntity, new()
         where TContext : DbContext, new()
     {
+        //public EfEntityRepositoryBase(TContext context)
+        //{
+        //    Context = context;
+        //}
+        //protected TContext Context { get; }
         public void Add(TEntity entity)
         {
             using (var context = new TContext())
@@ -41,6 +46,14 @@ namespace Core.DataAccess.EntityFramework
             }
         }
 
+        public async Task<TEntity> GetAsync(Expression<Func<TEntity, bool>> filter)
+        {
+            using (var context = new TContext())
+            {
+                return await context.Set<TEntity>().AsQueryable().FirstOrDefaultAsync(filter);
+            }
+        }
+
         public IList<TEntity> GetList(Expression<Func<TEntity, bool>> filter=null)
         {
             using (var context = new TContext())
@@ -48,6 +61,36 @@ namespace Core.DataAccess.EntityFramework
                 return filter == null
                     ? context.Set<TEntity>().ToList()
                     : context.Set<TEntity>().Where(filter).ToList();
+            }
+        }
+
+        public async Task<IEnumerable<TEntity>> GetListAsync(Expression<Func<TEntity, bool>> filter = null)
+        {
+            using (var context = new TContext())
+            {
+                return filter == null
+                     ? await context.Set<TEntity>().ToListAsync()
+                     : await context.Set<TEntity>().Where(filter).ToListAsync();
+
+            }
+            
+        }
+
+        public int SaveChanges()
+        {
+            using (var context = new TContext())
+            {
+                
+               return context.SaveChanges();
+            }
+        }
+
+        public Task<int> SaveChangesAsync()
+        {
+            using (var context = new TContext())
+            {
+
+                return context.SaveChangesAsync();
             }
         }
 

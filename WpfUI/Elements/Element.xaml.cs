@@ -12,17 +12,16 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
-using System.Xml.Linq;
 
-namespace WpfUI
+namespace WpfUI.Elements
 {
     /// <summary>
-    /// element.xaml etkileşim mantığı
+    /// Element.xaml etkileşim mantığı
     /// </summary>
     public partial class Element : UserControl
     {
         public static readonly RoutedEvent ElementClickEvent =
-              EventManager.RegisterRoutedEvent("ElementClick", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(Element));
+                 EventManager.RegisterRoutedEvent("ElementClick", RoutingStrategy.Bubble, typeof(RoutedEventHandler), typeof(Element));
 
         public event RoutedEventHandler ElementClick
         {
@@ -33,10 +32,7 @@ namespace WpfUI
         void Button_Click(object sender, RoutedEventArgs e) => RaiseEvent(new RoutedEventArgs(ElementClickEvent));
 
 
-        public Element()
-        {
-            InitializeComponent();
-        }
+        
 
         public string Title
         {
@@ -62,7 +58,10 @@ namespace WpfUI
         }
         public static readonly DependencyProperty IsActiveProperty = DependencyProperty.Register("IsActive", typeof(bool), typeof(Element));
 
-
-        
+        public Element()
+        {
+            InitializeComponent();
+        }
     }
 }
+

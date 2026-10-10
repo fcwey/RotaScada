@@ -15,6 +15,8 @@ namespace Business.Abstract
         IDataResult<List<BolumIslem>> GetList();
         IDataResult<List<BolumIslemDto>> GetListBolumIslemDtos();
         DataResult<List<BolumIslem>> GetListByBolumId(int bolumId);
+        Task<IDataResult<List<BolumIslemDto>>> GetListBolumIslemDtosAsync();
+        Task<IDataResult<List<BolumIslemDto>>> GetListBolumIslemDtosAsync(int bolumId);
         
         Result ServisExist(BolumIslem bolumIslem);
         IResult Add(BolumIslem bolumIslem);

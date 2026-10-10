@@ -1,18 +1,26 @@
 ﻿using Business.Abstract;
 using Business.Constants;
+using Core.Aspects.Autofac.Transaction;
 using Core.Utilities.Business;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
+using DataAccess.Concrete.EntityFramework;
 using Entities.Concrete;
+using Entities.Constant;
+using Entities.Dtos;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Query.SqlExpressions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
+using static Entities.Constant.TakipStatus;
 
 namespace Business.Concrete
 {
-    public class IslemTakipManager:IIslemTakipService
+    public class IslemTakipManager : IIslemTakipService
     {
 
         private IIslemTakipDal _islemTakipDal;
@@ -23,6 +31,12 @@ namespace Business.Concrete
         {
             _islemTakipDal.Add(islemTakip);
             return new SuccessResult(Messages.ServisAdded);
+        }
+
+        public async Task AddFirstIslemTakipByMgKayit(MalGirisKayit malGirisKayit)
+        {
+
+            await _islemTakipDal.AddFirstIslemTakipByMgKayit(malGirisKayit);
         }
 
         public IResult Delete(IslemTakip islemTakip)
@@ -46,6 +60,50 @@ namespace Business.Concrete
         public IDataResult<List<IslemTakip>> GetList()
         {
             return new SuccessDataResult<List<IslemTakip>>(_islemTakipDal.GetList().ToList());
+        }
+
+        public async Task<IDataResult<List<IslemTakip>>> GetListAsync()
+        {
+            var list = await _islemTakipDal.GetListAsync();
+            return new SuccessDataResult<List<IslemTakip>>(list.ToList());
+        }
+
+        public async Task<IDataResult<List<IslemTakipDto>>> GetListDtoAsync()
+        {
+            var list = await _islemTakipDal.GetListDtoAsync();
+            return new SuccessDataResult<List<IslemTakipDto>>(list.ToList());
+        }
+
+        public async Task<IDataResult<List<IslemTakipDto>>> GetListDtoAsync(int bolumId)
+        {
+            var list = await _islemTakipDal.GetListDtoAsync(bolumId);
+            return new SuccessDataResult<List<IslemTakipDto>>(list.ToList());
+        }
+
+        public async Task<IDataResult<List<IslemTakipDto>>> GetListDtoAsync(int bolumId, string nerede)
+        {
+            var list = await _islemTakipDal.GetListDtoAsync(bolumId, nerede);
+            return new SuccessDataResult<List<IslemTakipDto>>(list.ToList());
+        }
+
+        public async Task<IDataResult<List<IslemTakipDto>>> GetListDtoByFurnaceAsync(int furnaceId)
+        {
+            var list = await _islemTakipDal.GetListDtoByFurnaceAsync(furnaceId);
+            return new SuccessDataResult<List<IslemTakipDto>>(list.ToList());
+        }
+
+        [TransactionScopeAspect] //iş kuralları yazılabilir. biri gerçekleşmezsee diğerleride gercekleşmez
+        public async Task<IResult> SendToFurnaceAsync(List<IslemTakipDto> liste, int AktifIslemId)
+        {
+            await _islemTakipDal.SendToFurnaceAsync(liste, AktifIslemId);
+            await _islemTakipDal.SendToHistoryUpdateAsync(liste);
+            return new SuccessResult(Messages.ServisUpdated);
+        }
+
+        public Task<IResult> SendToUnitAsync(List<IslemTakipDto> liste, UnitType unitType)
+        {
+           
+            throw new NotImplementedException();
         }
 
         public Result ServisExist(IslemTakip islemTakip)

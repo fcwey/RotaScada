@@ -13,7 +13,7 @@ namespace Business.Abstract
     {
         IDataResult<MalGirisKayit> GetById(int malGirisKayitId);
         IDataResult<List<MalGirisKayit>> GetList();
-
+        Task<IResult> UpdateForTakip(MalGirisKayit malGirisKayit);
         IResult Add(MalGirisKayit malGirisKayit);
         IResult Delete(MalGirisKayit malGirisKayit);
         IResult Update(MalGirisKayit malGirisKayit);

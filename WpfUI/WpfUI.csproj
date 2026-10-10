@@ -20,6 +20,7 @@
     <None Remove="Assets\img_about.png" />
     <None Remove="Assets\img_acoustic.png" />
     <None Remove="Assets\select.png" />
+    <None Remove="Elements\islemehazir.png" />
     <None Remove="img_about.png" />
     <None Remove="img_acoustic.png" />
     <None Remove="img_album.png" />
@@ -61,6 +62,7 @@
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </Resource>
     <Resource Include="Assets\select.png" />
+    <Resource Include="Elements\islemehazir.png" />
     <Resource Include="img_about.png" />
     <Resource Include="img_album.png" />
     <Resource Include="img_arrow.png" />
@@ -77,10 +79,28 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="Properties\Settings.Designer.cs">
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Settings.settings</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
     <None Update="Assets\img_exit.png">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
       <Generator>assets</Generator>
     </None>
+    <None Update="Properties\Settings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Page Update="UControls\UC_FurnacePlaning\UC_FurnaceTitle.xaml">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </Page>
   </ItemGroup>
 
 </Project>

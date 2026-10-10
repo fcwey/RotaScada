@@ -43,7 +43,12 @@ namespace WpfUI
             set { SetValue(TitleProperty, value); }
         }
         public static readonly DependencyProperty TitleProperty = DependencyProperty.Register("Title", typeof(string), typeof(FurnaceElement));
-
+        public string IslemName
+        {
+            get { return (string)GetValue(IslemNameProperty); }
+            set { SetValue(IslemNameProperty, value); }
+        }
+        public static readonly DependencyProperty IslemNameProperty = DependencyProperty.Register("IslemName", typeof(string), typeof(FurnaceElement));
 
         public int Status
         {
@@ -51,6 +56,20 @@ namespace WpfUI
             set { SetValue(StatusProperty, value); }
         }
         public static readonly DependencyProperty StatusProperty = DependencyProperty.Register("Status", typeof(string), typeof(FurnaceElement));
+      
+        public int Adet
+        {
+            get { return (int)GetValue(AdetProperty); }
+            set { SetValue(AdetProperty, value); }
+        }
+        public static readonly DependencyProperty AdetProperty = DependencyProperty.Register("Adet", typeof(int), typeof(FurnaceElement));
+
+        public double Kg
+        {
+            get { return (double)GetValue(KgProperty); }
+            set { SetValue(KgProperty, value); }
+        }
+        public static readonly DependencyProperty KgProperty = DependencyProperty.Register("Kg", typeof(double), typeof(FurnaceElement));
 
 
 
