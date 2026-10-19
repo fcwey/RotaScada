@@ -1,3 +1,5 @@
+using Business.DependencyResolvers;
+using Business.Services; // PlcPollingBackgroundService için eklendi
 using Core.DependencyResolvers;
 using Core.Extensions;
 using Core.Utilities.IoC;
@@ -17,6 +19,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using WebAPI.Hubs;
+using WebAPI.Hubs.WebAPI.Hubs; // ScadaHub için eklendi
 
 namespace WebAPI
 {
@@ -29,15 +33,26 @@ namespace WebAPI
 
         public IConfiguration Configuration { get; }
 
-        // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllers();
+
+            // 1. SignalR Servisini Ekleme
+            services.AddSignalR();
+
+            // 2. Arka Planda Çalýþacak PLC Polling Servisini Ekleme
+            services.AddHostedService<PlcPollingBackgroundService>();
+
+            // CORS Ayarý (SignalR WebSockets / LongPolling için AllowCredentials ve AllowAnyMethod eklendi)
             services.AddCors(option =>
             {
                 option.AddPolicy("AllowOrigin",
-                    builder => builder.WithOrigins("http://localhost:3000")); //Bu sisteme giriþ yapacak alanlar yazýlýr
+                    builder => builder.WithOrigins("http://localhost:3000")
+                                      .AllowAnyHeader()
+                                      .AllowAnyMethod()
+                                      .AllowCredentials()); // SignalR el sýkýþmasý (handshake) için zorunludur
             });
+
             var tokenOptions = Configuration.GetSection("TokenOption").Get<TokenOption>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -52,15 +67,14 @@ namespace WebAPI
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey)
                     };
-
                 });
+
             services.AddDependencyResolvers(new ICoreModule[]
             {
                new CoreModule()
             });
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
@@ -69,18 +83,22 @@ namespace WebAPI
             }
 
             app.ConfigureCustomExceptionMiddleware();
-            app.UseCors(builder => builder.WithOrigins("http://localhost:3000").AllowAnyHeader()); //Eger bu adresten istek gelirde tümünü kabul er demek
+
+            // Tanýmlanan "AllowOrigin" CORS politikasýný çalýþtýrma
+            app.UseCors("AllowOrigin");
 
             app.UseHttpsRedirection();
 
             app.UseRouting();
-            app.UseAuthentication(); //Sadece anahtardýr. yetkisi bellidir. Ev sahibinin akrabasýdýr. sadece eve girer odalarý kurcalamaz
-            app.UseAuthorization();  //Yetkidir.Ev Sahibidir
 
+            app.UseAuthentication();
+            app.UseAuthorization();
 
+            // 3. Endpoint Yönlendirmeleri (REST API ve SignalR Hub)
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ScadaHub>("/scadaHub"); // Real-time WebSocket adresi
             });
         }
     }

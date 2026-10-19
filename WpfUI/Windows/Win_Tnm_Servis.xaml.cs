@@ -91,21 +91,21 @@ namespace WpfUI.Windows
             popup_uc.IsOpen = true;
             if (success)
             {
-                string str = System.IO.Directory.GetCurrentDirectory();
-                string imagePath = str + "\\icon\\success.png";
+                string str = AppContext.BaseDirectory;
+                string imagePath = str + "\\Assets\\success.png";
 
                 Header.PopupText.Text = message;
                 Header.PopupText.Foreground = new SolidColorBrush(Colors.White);
-                Header.PopupImage.Source = new BitmapImage(new Uri(imagePath));
+               // Header.PopupImage.Source = new BitmapImage(new Uri(imagePath));
             }
             else
             {
-                string str = System.IO.Directory.GetCurrentDirectory();
-                string imagePath = str + "\\icon\\fail.png";
+                string str = AppContext.BaseDirectory;
+                string imagePath = str + "\\Assets\\fail.png";
 
                 Header.PopupText.Text = "Başarısız: " + message;
                 Header.PopupText.Foreground = new SolidColorBrush(Colors.White);
-                Header.PopupImage.Source = new BitmapImage(new Uri(imagePath));
+               // Header.PopupImage.Source = new BitmapImage(new Uri(imagePath));
 
 
             }

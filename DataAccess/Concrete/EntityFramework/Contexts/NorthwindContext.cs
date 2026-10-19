@@ -28,28 +28,53 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
         public DbSet<Product> Products { get; set; }
         public DbSet<Category> Categories { get; set; }
 
+
+
+       // SCADA Tabloları
+        public DbSet<Alarm> Alarms { get; set; }
+        public DbSet<Recipe> Recipes { get; set; }
+        public DbSet<Batch> Batches { get; set; }
+        public DbSet<ProcessDataLog> ProcessDataLogs { get; set; }
+        public DbSet<AuditLog> AuditLogs { get; set; }
+
+
+
+
+
+
         //MalKabul 
         public DbSet<User> Users { get; set; }  
         public DbSet<OperationClaim> OperationClaims { get; set; }
         public DbSet<UserOperationClaim> UserOperationClaims { get; set; }
 
-        public DbSet<Servis> Servisler { get; set; }
-        public DbSet<Bolum> Bolumler { get; set; }
-        public DbSet<BolumIslem> BolumIslemler { get; set; }
-        public DbSet<Malzeme> Malzemeler { get; set; }
-        public DbSet<MalzemeGrup> MalzemeGrups { get; set; }
-        public DbSet<Islem> Islemler { get; set; }
-        public DbSet<AktifIslem> AktifIslemler { get; set; }
-        public DbSet<Fiyat> Fiyatlar { get; set; }
-        public DbSet<Musteri> Musteriler { get; set; }
-        public DbSet<MusteriFiyat> MusteriFiyats { get; set; }
-        public DbSet<Furnace> Furnaces { get; set; }
-        public DbSet<MalGirisKayit> MalGirisKayitlar { get; set; }
-        public DbSet<MalGirisMalzeme> MalGirisMalzemeler { get; set; }
-        public DbSet<MalGirisIslem> MalGirisIslemler { get; set; }
-        public DbSet<MalGirisResim> MalGirisResimler { get; set; }
-        public DbSet<IslemTakip> IslemTakips { get; set; }
 
 
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // ProcessDataLog Index Yapılandırması (Historian Hızlı Trend Sorguları İçin)
+            modelBuilder.Entity<ProcessDataLog>()
+                .HasIndex(p => p.Timestamp)
+                .HasDatabaseName("IX_ProcessDataLog_Timestamp");
+
+            modelBuilder.Entity<ProcessDataLog>()
+                .HasIndex(p => p.BatchId)
+                .HasDatabaseName("IX_ProcessDataLog_BatchId");
+
+            // Precision ve Veri Tipleri
+            modelBuilder.Entity<Recipe>()
+                .Property(r => r.TargetTemperature)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Recipe>()
+                .Property(r => r.HeatingRampRate)
+                .HasPrecision(18, 2);
+
+            modelBuilder.Entity<Recipe>()
+                .Property(r => r.GasFlowSetPoint)
+                .HasPrecision(18, 2);
+        }
     }
 }

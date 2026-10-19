@@ -7,6 +7,7 @@ using Core.Utilities.Interceptors;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
+using DataAccess.Concrete.S7Net;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -26,55 +27,11 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<CategoryManager>().As<ICategoryService>();
             builder.RegisterType<EfCategoryDal>().As<ICategoryDal>();
 
-            builder.RegisterType<ServisManager>().As<IServisService>();
-            builder.RegisterType<EfServisDal>().As<IServisDal>();
-
-            builder.RegisterType<BolumManager>().As<IBolumService>();
-            builder.RegisterType<EfBolumDal>().As<IBolumDal>();
-
-            builder.RegisterType<BolumIslemManager>().As<IBolumIslemService>();
-            builder.RegisterType<EfBolumIslemDal>().As<IBolumIslemDal>();
-
-            builder.RegisterType<MalzemeManager>().As<IMalzemeService>();
-            builder.RegisterType<EfMalzemeDal>().As<IMalzemeDal>();
+        
 
 
-            builder.RegisterType<MalzemeGrupManager>().As<IMalzemeGrupService>();
-            builder.RegisterType<EfMalzemeGrupDal>().As<IMalzemeGrupDal>();
-
-            builder.RegisterType<IslemManager>().As<IIslemService>();
-            builder.RegisterType<EfIslemDal>().As<IIslemDal>();
-
-            builder.RegisterType<AktifIslemManager>().As<IAktifIslemService>();
-            builder.RegisterType<EfAktifIslemDal>().As<IAktifIslemDal>();
-
-            builder.RegisterType<FiyatManager>().As<IFiyatService>();
-            builder.RegisterType<EfFiyatDal>().As<IFiyatDal>();
-
-            builder.RegisterType<MusteriManager>().As<IMusteriService>();
-            builder.RegisterType<EfMusteriDal>().As<IMusteriDal>();
-
-            builder.RegisterType<MusteriFiyatManager>().As<IMusteriFiyatService>();
-            builder.RegisterType<EfMusteriFiyatDal>().As<IMusteriFiyatDal>();
-
-            builder.RegisterType<MalGirisKayitManager>().As<IMalGirisKayitService>();
-            builder.RegisterType<EfMalGirisKayitDal>().As<IMalGirisKayitDal>();
-
-            builder.RegisterType<MalGirisMalzemeManager>().As<IMalGirisMalzemeService>();
-            builder.RegisterType<EfMalGirisMalzemeDal>().As<IMalGirisMalzemeDal>();
-
-            builder.RegisterType<MalGirisResimManager>().As<IMalGirisResimService>();
-            builder.RegisterType<EfMalGirisResimDal>().As<IMalGirisResimDal>();
-
-            builder.RegisterType<MalGirisIslemManager>().As<IMalGirisIslemService>();
-            builder.RegisterType<EfMalGirisIslemDal>().As<IMalGirisIslemDal>();
-
-            builder.RegisterType<FurnaceManager>().As<IFurnaceService>();
-            builder.RegisterType<EfFurnaceDal>().As<IFurnaceDal>();
-
-            builder.RegisterType<IslemTakipManager>().As<IIslemTakipService>();
-            builder.RegisterType<EfIslemTakipDal>().As<IIslemTakipDal>();
-
+            builder.RegisterType<S7DriverDal>().As<IS7DriverDal>().SingleInstance(); // PLC sürücüsü Tekil (SingleInstance) olmalı
+            builder.RegisterType<PlcManager>().As<IPlcService>().SingleInstance();
 
 
 
