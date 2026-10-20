@@ -1,5 +1,4 @@
 using Business.DependencyResolvers;
-using Business.Services; // PlcPollingBackgroundService için eklendi
 using Core.DependencyResolvers;
 using Core.Extensions;
 using Core.Utilities.IoC;
@@ -8,19 +7,15 @@ using Core.Utilities.Security.Jwt;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 using WebAPI.Hubs;
-using WebAPI.Hubs.WebAPI.Hubs; // ScadaHub için eklendi
+using WebAPI.Hubs.WebAPI.Hubs;
+using WebAPI.Services;
+using WebAPI.Services.WebAPI.Services;
 
 namespace WebAPI
 {
@@ -37,22 +32,24 @@ namespace WebAPI
         {
             services.AddControllers();
 
-            // 1. SignalR Servisini Ekleme
+            // 1. SignalR Servisi
             services.AddSignalR();
 
-            // 2. Arka Planda Çalýþacak PLC Polling Servisini Ekleme
+            // 2. Arka Plan PLC Polling Servisi
             services.AddHostedService<PlcPollingBackgroundService>();
 
-            // CORS Ayarý (SignalR WebSockets / LongPolling için AllowCredentials ve AllowAnyMethod eklendi)
+
+            // 3. CORS Ayarý (React / Vite / HMI arayüzleri için)
             services.AddCors(option =>
             {
                 option.AddPolicy("AllowOrigin",
-                    builder => builder.WithOrigins("http://localhost:3000")
+                    builder => builder.WithOrigins("http://localhost:3000", "http://localhost:5173")
                                       .AllowAnyHeader()
                                       .AllowAnyMethod()
-                                      .AllowCredentials()); // SignalR el sýkýþmasý (handshake) için zorunludur
+                                      .AllowCredentials()); // SignalR WebSocket el sýkýþmasý için þarttýr
             });
 
+            // 4. JWT Yetkilendirme ve SignalR WebSocket Token Entegrasyonu
             var tokenOptions = Configuration.GetSection("TokenOption").Get<TokenOption>();
             services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
                 .AddJwtBearer(options =>
@@ -67,8 +64,27 @@ namespace WebAPI
                         ValidateIssuerSigningKey = true,
                         IssuerSigningKey = SecurityKeyHelper.CreateSecurityKey(tokenOptions.SecurityKey)
                     };
+
+                    // WebSocket üzerinden JWT Token okuma mekanizmasý
+                    options.Events = new JwtBearerEvents
+                    {
+                        OnMessageReceived = context =>
+                        {
+                            var accessToken = context.Request.Query["access_token"];
+                            var path = context.HttpContext.Request.Path;
+
+                            // Ýstenen adres SignalR Hub'ý ise token'ý sorgu parametresinden çek
+                            if (!string.IsNullOrEmpty(accessToken) &&
+                               (path.StartsWithSegments("/scadaHub") || path.StartsWithSegments("/alarmHub")))
+                            {
+                                context.Token = accessToken;
+                            }
+                            return Task.CompletedTask;
+                        }
+                    };
                 });
 
+            // 5. Core Baðýmlýlýklarý
             services.AddDependencyResolvers(new ICoreModule[]
             {
                new CoreModule()
@@ -84,7 +100,6 @@ namespace WebAPI
 
             app.ConfigureCustomExceptionMiddleware();
 
-            // Tanýmlanan "AllowOrigin" CORS politikasýný çalýþtýrma
             app.UseCors("AllowOrigin");
 
             app.UseHttpsRedirection();
@@ -94,11 +109,12 @@ namespace WebAPI
             app.UseAuthentication();
             app.UseAuthorization();
 
-            // 3. Endpoint Yönlendirmeleri (REST API ve SignalR Hub)
+            // 6. Endpoint Yönlendirmeleri
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
-                endpoints.MapHub<ScadaHub>("/scadaHub"); // Real-time WebSocket adresi
+                endpoints.MapHub<ScadaHub>("/scadaHub");   // Canlý Telemetri WebSocket Adresi
+                endpoints.MapHub<AlarmHub>("/alarmHub");   // Anlýk Alarm WebSocket Adresi
             });
         }
     }

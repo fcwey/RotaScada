@@ -1,4 +1,5 @@
 ﻿using Core.Utilities.Results;
+using S7.Net;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -7,10 +8,11 @@ namespace Business.Abstract
 {
     public interface IPlcService
     {
-        IResult ConnectPlc(string ipAddress);
+        Task<IResult> ConnectPlcAsync(string ipAddress);
         IResult DisconnectPlc();
-        IDataResult<float> ReadTemperature(int dbNumber, int startByte);
-        IResult WriteSetpoint(int dbNumber, int startByte, float value);
+        Task<IDataResult<float>> ReadTemperatureAsync(int dbNumber, int startByte);
+        Task<IResult> WriteSetpointAsync(int dbNumber, int startByte, float value);
+        Task<IResult> PulseBitAsync(DataType dataType, int dbNumber, int startByte, int bitNumber, int durationMs = 500);
     }
 }
 

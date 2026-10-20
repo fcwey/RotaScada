@@ -21,5 +21,12 @@ namespace Core.DataAccess
         int SaveChanges();
         Task<int> SaveChangesAsync();
 
+
+        // --- Asenkron (Async) Metotlar ---
+        Task AddAsync(T entity);
+        Task UpdateAsync(T entity);
+        Task DeleteAsync(T entity);
     }
+
 }
+

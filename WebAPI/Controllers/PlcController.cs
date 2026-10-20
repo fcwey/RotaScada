@@ -1,5 +1,7 @@
 ﻿using Business.Abstract;
 using Microsoft.AspNetCore.Mvc;
+using S7.Net;
+using System.Threading.Tasks;
 
 namespace WebAPI.Controllers
 {
@@ -15,27 +17,27 @@ namespace WebAPI.Controllers
         }
 
         [HttpPost("connect")]
-        public IActionResult Connect(string ipAddress)
+        public async Task<IActionResult> Connect([FromQuery] string ipAddress = "192.168.0.1")
         {
-            var result = _plcService.ConnectPlc(ipAddress);
+            var result = await _plcService.ConnectPlcAsync(ipAddress);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
 
         [HttpPost("setpoint")]
-        public IActionResult SetPoint(int db, int startByte, float value)
+        public async Task<IActionResult> WriteSetpoint([FromQuery] int dbNumber, [FromQuery] int startByte, [FromQuery] float value)
         {
-            var result = _plcService.WriteSetpoint(db, startByte, value);
+            var result = await _plcService.WriteSetpointAsync(dbNumber, startByte, value);
             if (result.IsSuccess) return Ok(result);
             return BadRequest(result);
         }
 
-        [HttpGet("read-temperature")]
-        public IActionResult ReadTemperature(int db, int startByte)
+        [HttpPost("pulse-bit")]
+        public async Task<IActionResult> PulseBit([FromQuery] int dbNumber, [FromQuery] int startByte, [FromQuery] int bitNumber, [FromQuery] int durationMs = 500)
         {
-            var result = _plcService.ReadTemperature(db, startByte);
-            if (result.IsSuccess) return Ok(result.Data);
-            return BadRequest(result.Message);
+            var result = await _plcService.PulseBitAsync(DataType.DataBlock, dbNumber, startByte, bitNumber, durationMs);
+            if (result.IsSuccess) return Ok(result);
+            return BadRequest(result);
         }
     }
 }

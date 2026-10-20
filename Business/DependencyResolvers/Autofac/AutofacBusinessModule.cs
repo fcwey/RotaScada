@@ -27,12 +27,25 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<CategoryManager>().As<ICategoryService>();
             builder.RegisterType<EfCategoryDal>().As<ICategoryDal>();
 
-        
 
 
-            builder.RegisterType<S7DriverDal>().As<IS7DriverDal>().SingleInstance(); // PLC sürücüsü Tekil (SingleInstance) olmalı
             builder.RegisterType<PlcManager>().As<IPlcService>().SingleInstance();
 
+
+
+
+            // DataAccess & Driver Kayıtları
+            builder.RegisterType<S7DriverDal>().As<IS7DriverDal>().SingleInstance();
+            builder.RegisterType<EfAlarmDal>().As<IAlarmDal>().SingleInstance();
+            builder.RegisterType<EfRecipeDal>().As<IRecipeDal>().SingleInstance();
+            builder.RegisterType<EfAuditLogDal>().As<IAuditLogDal>().SingleInstance();
+
+            // Business Servis Kayıtları
+            builder.RegisterType<TagManager>().As<ITagService>().SingleInstance();
+            builder.RegisterType<AlarmManager>().As<IAlarmService>().SingleInstance();
+            builder.RegisterType<HistorianManager>().As<IHistorianService>().SingleInstance();
+            builder.RegisterType<RecipeManager>().As<IRecipeService>().SingleInstance();
+            builder.RegisterType<AuditTrailManager>().As<IAuditTrailService>().SingleInstance();
 
 
 

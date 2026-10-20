@@ -19,9 +19,12 @@ namespace Business.Concrete
             _s7DriverDal = s7DriverDal;
         }
 
-        public IResult ConnectPlc(string ipAddress)
+      
+        public async Task<IResult> ConnectPlcAsync(string ipAddress)
         {
-            var result = _s7DriverDal.Connect(ipAddress, CpuType.S71200, 0, 1);
+            // IS7DriverDal üzerindeki ConnectAsync metodunu await ile çağırıyoruz
+            var result = await _s7DriverDal.ConnectAsync(ipAddress, CpuType.S71200, 0, 1);
+
             if (result)
                 return new SuccessResult("PLC Bağlantısı Başarılı");
 
@@ -35,12 +38,14 @@ namespace Business.Concrete
         }
 
         [LogAspect(typeof(FileLogger))]
-        public IDataResult<float> ReadTemperature(int dbNumber, int startByte)
+        public async Task<IDataResult<float>> ReadTemperatureAsync(int dbNumber, int startByte)
         {
             try
             {
-                var rawValue = _s7DriverDal.ReadTag(DataType.DataBlock, dbNumber, startByte, VarType.Real);
-                if (rawValue == null) return new ErrorDataResult<float>("Veri okunamadı");
+                // ReadTag yerine ReadTagAsync metodunu await ile çağırıyoruz
+                var rawValue = await _s7DriverDal.ReadTagAsync(DataType.DataBlock, dbNumber, startByte, VarType.Real);
+                if (rawValue == null)
+                    return new ErrorDataResult<float>("Veri okunamadı");
 
                 float temp = Convert.ToSingle(rawValue);
                 return new SuccessDataResult<float>(temp);
@@ -50,8 +55,25 @@ namespace Business.Concrete
                 return new ErrorDataResult<float>($"Hata: {ex.Message}");
             }
         }
-
         public IResult WriteSetpoint(int dbNumber, int startByte, float value)
+        {
+            if (value < 0 || value > 1200)
+            {
+                return new ErrorResult("Setpoint değeri 0 - 1200 °C sınırları dışında.");
+            }
+
+            try
+            {
+                _s7DriverDal.WriteTagAsync(DataType.DataBlock, dbNumber, startByte, value).GetAwaiter().GetResult();
+                return new SuccessResult("Setpoint PLC'ye yazıldı.");
+            }
+            catch (Exception ex)
+            {
+                return new ErrorResult($"Yazma Hatası: {ex.Message}");
+            }
+        }
+
+        public async Task<IResult> WriteSetpointAsync(int dbNumber, int startByte, float value)
         {
             // Setpoint Sınır Kontrolü (Business Rule)
             if (value < 0 || value > 1200)
@@ -61,12 +83,25 @@ namespace Business.Concrete
 
             try
             {
-                _s7DriverDal.WriteTag(DataType.DataBlock, dbNumber, startByte, value);
+                // WriteTag yerine WriteTagAsync metodunu await ile çağırıyoruz
+                await _s7DriverDal.WriteTagAsync(DataType.DataBlock, dbNumber, startByte, value);
                 return new SuccessResult("Setpoint PLC'ye yazıldı.");
             }
             catch (Exception ex)
             {
                 return new ErrorResult($"Yazma Hatası: {ex.Message}");
+            }
+        }
+        public async Task<IResult> PulseBitAsync(DataType dataType, int dbNumber, int startByte, int bitNumber, int durationMs = 500)
+        {
+            try
+            {
+                await _s7DriverDal.PulseBitAsync(dataType, dbNumber, startByte, bitNumber, durationMs);
+                return new SuccessResult("Bit tetikleme (Pulse) başarıyla gönderildi.");
+            }
+            catch (Exception ex)
+            {
+                return new ErrorResult($"Pulse Hatası: {ex.Message}");
             }
         }
     }
