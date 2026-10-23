@@ -1,92 +1,134 @@
 ﻿using Business.Abstract;
 using Core.Utilities.Results;
 using DataAccess.Abstract;
+using DataAccess.Concrete.EntityFramework.Contexts;
 using Entities.Concrete;
+using Entities.Structures; // ◄── PlcRecipeStruct ve PlcStepStruct için şarttır
+using Microsoft.EntityFrameworkCore;
+using S7.Net;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace Business.Concrete
 {
     public class RecipeManager : IRecipeService
     {
-        private readonly IRecipeDal _recipeDal;
+        private readonly NorthwindContext _context;
         private readonly IS7DriverDal _s7DriverDal;
 
-        public RecipeManager(IRecipeDal recipeDal, IS7DriverDal s7DriverDal)
+        public RecipeManager(NorthwindContext context, IS7DriverDal s7DriverDal)
         {
-            _recipeDal = recipeDal;
+            _context = context;
             _s7DriverDal = s7DriverDal;
         }
 
         public async Task<IDataResult<List<Recipe>>> GetAllRecipesAsync()
         {
-            var recipes = await _recipeDal.GetListAsync(r => r.IsActive);
-            return new SuccessDataResult<List<Recipe>>(recipes.ToList());
+            var recipes = await _context.Recipes.Include(r => r.Steps).ToListAsync();
+            return new SuccessDataResult<List<Recipe>>(recipes, "Reçeteler listelendi.");
         }
-    
+
         public async Task<IDataResult<Recipe>> GetRecipeByIdAsync(int id)
         {
-            var recipe = await _recipeDal.GetAsync(r => r.Id == id);
+            var recipe = await _context.Recipes.Include(r => r.Steps).FirstOrDefaultAsync(r => r.Id == id);
             if (recipe == null) return new ErrorDataResult<Recipe>("Reçete bulunamadı.");
             return new SuccessDataResult<Recipe>(recipe);
         }
 
         public async Task<IResult> AddRecipeAsync(Recipe recipe)
         {
-            await _recipeDal.AddAsync(recipe);
-            return new SuccessResult("Reçete başarıyla kaydedildi.");
+            await _context.Recipes.AddAsync(recipe);
+            await _context.SaveChangesAsync();
+            return new SuccessResult("Reçete veritabanına eklendi.");
         }
 
         public async Task<IResult> UpdateRecipeAsync(Recipe recipe)
         {
-            await _recipeDal.UpdateAsync(recipe);
+            _context.Recipes.Update(recipe);
+            await _context.SaveChangesAsync();
             return new SuccessResult("Reçete güncellendi.");
         }
 
         public async Task<IResult> DeleteRecipeAsync(int id)
         {
-            var recipe = await _recipeDal.GetAsync(r => r.Id == id);
-            if (recipe != null)
-            {
-                recipe.IsActive = false; // Soft-delete
-                await _recipeDal.UpdateAsync(recipe);
-            }
+            var recipe = await _context.Recipes.FindAsync(id);
+            if (recipe == null) return new ErrorResult("Silinecek reçete bulunamadı.");
+            _context.Recipes.Remove(recipe);
+            await _context.SaveChangesAsync();
             return new SuccessResult("Reçete silindi.");
         }
 
+        // 1. Reçeteyi PLC DB2'ye İndir
         public async Task<IResult> DownloadRecipeToPlcAsync(int recipeId, int targetDbNumber = 2)
         {
-            var recipe = await _recipeDal.GetAsync(r => r.Id == recipeId);
+            var recipe = await _context.Recipes
+                .Include(r => r.Steps)
+                .FirstOrDefaultAsync(r => r.Id == recipeId);
+
             if (recipe == null)
-                return new ErrorResult("PLC'ye aktarılacak reçete bulunamadı.");
+                return new ErrorResult("PLC'ye aktarılacak reçete veritabanında bulunamadı.");
 
-            // 1. Sınır Kontrolleri (Safety Validation)
-            if (recipe.TargetTemperature > 1200)
-                return new ErrorResult("Güvenlik İhlali: Hedef sıcaklık 1200°C üzerinde olamaz.");
+            if (!_s7DriverDal.IsConnected)
+                return new ErrorResult("PLC bağlantısı yok! Reçete yüklenemedi.");
 
-            // 2. PLC DB2 Hazırlığı (Reçete Veri Yapısı)
-            var plcRecipeStruct = new PlcRecipeStruct
+            var plcRecipe = new PlcRecipeStruct
             {
-                TargetTemperature = (float)recipe.TargetTemperature,
-                SoakTimeMinutes = recipe.SoakTimeMinutes,
-                HeatingRampRate = (float)recipe.HeatingRampRate,
-                GasFlowSetPoint = (float)recipe.GasFlowSetPoint
+                RecipeID = (short)recipe.RecipeID,
+                RecipeType = (short)recipe.RecipeType,
+                RecipeName = recipe.RecipeName.Length > 30 ? recipe.RecipeName.Substring(0, 30) : recipe.RecipeName,
+                TotalStepCount = (short)recipe.Steps.Count
             };
 
-            // 3. Thread-Safe WriteClassAsync ile PLC DB2'ye Yazma
-            await _s7DriverDal.WriteClassAsync(plcRecipeStruct, targetDbNumber, startByte: 0);
+            var sortedSteps = recipe.Steps.OrderBy(s => s.StepNo).ToList();
+            for (int i = 0; i < 20; i++)
+            {
+                if (i < sortedSteps.Count)
+                {
+                    var step = sortedSteps[i];
+                    plcRecipe.Steps[i] = new PlcStepStruct
+                    {
+                        StepType = (short)step.StepType,
+                        Vac_SetPoint = step.Vac_SetPoint,
+                        Vac_Timeout = (uint)step.Vac_TimeoutMs,
+                        TargetTemp = step.TargetTemp,
+                        StepTime = (uint)step.StepTimeMs,
+                        GSoak = step.GSoak,
+                        N2_Flow = step.N2_Flow,
+                        NH3_Flow = step.NH3_Flow,
+                        dNH3_Flow = step.dNH3_Flow,
+                        Su_Flow = step.Su_Flow,
+                        Oxygen_Set = step.Oxygen_Set
+                    };
+                }
+                else
+                {
+                    plcRecipe.Steps[i] = new PlcStepStruct();
+                }
+            }
 
-            return new SuccessResult($"'${recipe.RecipeName}' reçetesi PLC DB${targetDbNumber} alanına başarıyla indirildi.");
+            await _s7DriverDal.WriteClassAsync(plcRecipe, targetDbNumber, startByte: 0);
+            return new SuccessResult($"'{recipe.RecipeName}' reçetesi PLC DB{targetDbNumber} alanına başarıyla indirildi.");
         }
 
-        // PLC DB2 Reçete Byte Hizalaması
-        private class PlcRecipeStruct
+        // 2. Reçeteyi İndir ve Fırını Başlat
+        public async Task<IResult> DownloadAndStartRecipeAsync(int recipeId)
         {
-            public float TargetTemperature { get; set; }  // DB2.DBD0
-            public int SoakTimeMinutes { get; set; }      // DB2.DBD4
-            public float HeatingRampRate { get; set; }    // DB2.DBD8
-            public float GasFlowSetPoint { get; set; }    // DB2.DBD12
+            var downloadResult = await DownloadRecipeToPlcAsync(recipeId, targetDbNumber: 2);
+            if (!downloadResult.IsSuccess)
+                return downloadResult;
+
+            try
+            {
+                // DB3.DBX0.0 adresine 1 saniyelik Start Darbesi gönderilir
+                await _s7DriverDal.PulseBitAsync(DataType.DataBlock, db: 3, startByte: 0, bitNumber: 0, durationMs: 1000);
+                return new SuccessResult("Reçete PLC'ye indirildi ve Fırın Start komutu tetiklendi.");
+            }
+            catch (Exception ex)
+            {
+                return new ErrorResult($"Reçete yüklendi fakat Start verilirken hata oluştu: {ex.Message}");
+            }
         }
     }
 }

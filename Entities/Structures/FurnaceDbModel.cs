@@ -3,10 +3,13 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Entities.Concrete
+//FurnaceDbModel Amacı: Bu sınıf veritabanında bir tablo değildir. Siemens PLC'nin DB1 (DB_PLC_To_HMI) bellek bloğunu S7.Net kütüphanesiyle tek seferde okumak
+//(ReadClassAsync) için kullanılan bir PLC Bellek Haritası (PLC Mapping Model) sınıfıdır.
+namespace Entities.Structures
 {
-    public class FurnaceDbModel : IEntity
+    public class FurnaceDbModel 
     {
+        // Siemens PLC DB1 (DB_PLC_To_HMI) Canlı Telemetri Bellek Haritası
         public float Zone1Temperature { get; set; }  // DB1.CBD0  (Real)
         public float Zone2Temperature { get; set; }  // DB1.CBD4  (Real)
         public float ChamberPressure { get; set; }   // DB1.CBD8  (Real)

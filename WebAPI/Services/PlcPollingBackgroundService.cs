@@ -3,6 +3,7 @@
     using Business.Abstract;
     using DataAccess.Abstract;
     using Entities.Concrete;
+    using Entities.Structures;
     using global::WebAPI.Hubs;
     using global::WebAPI.Hubs.WebAPI.Hubs;
     using Microsoft.AspNetCore.SignalR;

@@ -1,0 +1,28 @@
+
+   STRUCT Step
+      StepType       : Int;     // 0: BOŞ, 1: VAKUM, 2: ISITMA, 3: SOĞUTMA
+      
+      // --- Vakum Parametreleri ---
+      Vac_SetPoint   : Real;    // Target Vakum Basıncı (mbar)
+      Vac_Timeout    : Time;    // Vakum Zaman Aşımı Süresi
+      
+      // --- Isıtma & Soğutma Sıcaklık Parametreleri ---
+      TargetTemp     : Real;    // Hedef Sıcaklık (°C)
+      StepTime       : Time;    // Adım Süresi (T#0s ise adım sonlanır)
+      GSoak          : Real;    // Guaranteed Soak Toleransı (°C)
+      
+      // --- Gaz ve Sıvı Debileri (L/saat) ---
+      N2_Flow        : Real;    // Azot Debisi (L/h)
+      NH3_Flow       : Real;    // Amonyak Debisi (L/h)
+      dNH3_Flow      : Real;    // Ayrışmış Amonyak Debisi (L/h)
+      Su_Flow        : Real;    // Su / Nemlendirme Debisi (L/h)
+      Oxygen_Set     : Real;    // Oksijen / Oksidasyon Set Değeri (%)
+   END_STRUCT;
+
+   STRUCT Recipe
+      RecipeID       : Int;          // Reçete Numarası
+      RecipeType      : Int;          // 0: BOŞ, 1: TEMPER 2: NİTRASYON 3: OKSİDASYON
+      RecipeName     : String[30];   // Reçete Adı
+      TotalStepCount : Int;          // Reçetedeki Toplam Aktif Adım Sayısı
+      Steps          : Array[1..20] OF "Step"; // Max 20 Adımlık Esnek Dizi
+   END_STRUCT;

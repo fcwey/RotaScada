@@ -47,6 +47,8 @@ namespace Business.DependencyResolvers.Autofac
             builder.RegisterType<RecipeManager>().As<IRecipeService>().SingleInstance();
             builder.RegisterType<AuditTrailManager>().As<IAuditTrailService>().SingleInstance();
 
+            builder.RegisterType<ReportManager>().As<IReportService>().SingleInstance();
+            builder.RegisterType<InterlockManager>().As<IInterlockService>().SingleInstance();
 
 
             //-----------------------------

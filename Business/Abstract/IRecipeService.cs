@@ -16,5 +16,6 @@ namespace Business.Abstract
 
         // Reçete parametrelerini doğrulayıp PLC DB'sine yazar (Download)
         Task<IResult> DownloadRecipeToPlcAsync(int recipeId, int targetDbNumber = 2);
+        Task<IResult> DownloadAndStartRecipeAsync(int recipeId);
     }
 }
