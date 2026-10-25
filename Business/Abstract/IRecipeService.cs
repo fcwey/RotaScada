@@ -15,7 +15,7 @@ namespace Business.Abstract
         Task<IResult> DeleteRecipeAsync(int id);
 
         // Reçete parametrelerini doğrulayıp PLC DB'sine yazar (Download)
-        Task<IResult> DownloadRecipeToPlcAsync(int recipeId, int targetDbNumber = 2);
-        Task<IResult> DownloadAndStartRecipeAsync(int recipeId);
+        Task<IResult> DownloadRecipeToPlcAsync(int recipeId, int targetDbNumber = 2, int? userId = null, string userIp = "127.0.0.1");
+        Task<IResult> DownloadAndStartRecipeAsync(int recipeId, int? userId = null, string userIp = "127.0.0.1");
     }
 }
