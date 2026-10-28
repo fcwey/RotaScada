@@ -26,3 +26,14 @@
       TotalStepCount : Int;          // Reçetedeki Toplam Aktif Adım Sayısı
       Steps          : Array[1..20] OF "Step"; // Max 20 Adımlık Esnek Dizi
    END_STRUCT;
+
+
+
+Plan
+*Alarm Tarafı var. ALarm DBsi
+*Sürekli KAyıt tarafı var.
+*Reçete tarafı var.
+*
+
+Scadaya ne vermeliyiz;
+AlarmDb, ReçeteDb, Furnace Data
