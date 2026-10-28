@@ -240,7 +240,23 @@ namespace DataAccess.Concrete.S7Net
                 }
             }
         }
+        public async Task<CpuState> GetCpuStatusAsync()
+        {
+            if (!IsConnected)
+                return CpuState.Unknown;
 
+            try
+            {
+                // PLC bağlantısı aktifse ve yanıt alınıyorsa RUN kabul edilir
+                // S7-1200 / S7-1500 için SZL okuma yapılarak STOP/RUN ayrımı derinleştirilebilir
+                bool pingOk = await PingAsync();
+                return pingOk ? CpuState.Run : CpuState.Stop;
+            }
+            catch
+            {
+                return CpuState.Error;
+            }
+        }
         public void Dispose()
         {
             if (!_disposed)
@@ -253,6 +269,23 @@ namespace DataAccess.Concrete.S7Net
                 _disposed = true;
             }
             GC.SuppressFinalize(this);
+        }
+
+        public async Task WriteSetpointAsync(int db, int startByte, float value)
+        {
+            if (!IsConnected)
+                throw new InvalidOperationException("PLC bağlantısı aktif değil. Setpoint yazılamadı.");
+
+            try
+            {
+                // S7.Net kütüphanesi float (Real) tiplerini DB alanına otomatik dönüştürerek yazar
+                // Adres: DB{db}.CBD{startByte} (Örn: DB1.CBD10)
+                await _plc.WriteAsync(DataType.DataBlock, db, startByte, value);
+            }
+            catch (Exception ex)
+            {
+                throw new Exception($"PLC DB{db}.DBD{startByte} adresine {value} setpoint değeri yazılırken hata oluştu: {ex.Message}", ex);
+            }
         }
     }
 }

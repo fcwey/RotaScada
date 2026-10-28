@@ -1,8 +1,7 @@
 ﻿using Core.Utilities.Results;
 using Entities.Concrete;
-using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Threading.Tasks;
 
 namespace Business.Abstract
 {
@@ -14,8 +13,8 @@ namespace Business.Abstract
         Task<IResult> UpdateRecipeAsync(Recipe recipe);
         Task<IResult> DeleteRecipeAsync(int id);
 
-        // Reçete parametrelerini doğrulayıp PLC DB'sine yazar (Download)
-        Task<IResult> DownloadRecipeToPlcAsync(int recipeId, int targetDbNumber = 2, int? userId = null, string userIp = "127.0.0.1");
-        Task<IResult> DownloadAndStartRecipeAsync(int recipeId, int? userId = null, string userIp = "127.0.0.1");
+        Task<IResult> DownloadRecipeToPlcAsync(int recipeId, int targetDbNumber = 2, int? userId = null, string? userIp = null);
+        Task<IResult> DownloadAndStartRecipeAsync(int recipeId, int? userId = null, string? userIp = null);
+        Task<IResult> StopActiveBatchAsync(string completionNote = "Proses tamamlandı.", int? userId = null, string? userIp = null);
     }
 }

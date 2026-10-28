@@ -17,10 +17,7 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
             base.OnConfiguring(optionsBuilder);
         }
 
-        // Northwind & Deneme Tabloları
-        public DbSet<Product> Products { get; set; }
-        public DbSet<Category> Categories { get; set; }
-
+ 
         // SCADA Tabloları
         public DbSet<Alarm> Alarms { get; set; }
         public DbSet<Recipe> Recipes { get; set; }

@@ -1,15 +1,20 @@
 ﻿using Business.Abstract;
-using DataAccess.Abstract;
 using Core.Utilities.Results;
+using DataAccess.Abstract;
 using Entities.Concrete;
 using Entities.Dtos;
+using Entities.Structures;
 using S7.Net;
 using System;
+using System.Net.ServerSentEvents;
 using System.Threading.Tasks;
-using Entities.Structures;
 
 namespace Business.Concrete
 {
+    //*Saha operatörü HMI veya SCADA ekranından kritik bir manuel işlem başlatmak istediğinde(örneğin "Yakıcıyı Çalıştır"
+     //veya "Ana Gaz Vanasını Aç"), sistem bu komutu doğrudan PLC'ye göndermez. Önce bu metot çalışarak fırının fiziksel durumunu denetler:
+    //*SCADA ön yüzündeki (React / HMI) fırın görsel akış şemasında (Mimic Diagram) yer alan vanaların,
+     //fanların, pompaların ve yakıcıların anlık durum renklerini besler:
     public class InterlockManager : IInterlockService
     {
         private readonly IS7DriverDal _s7DriverDal;

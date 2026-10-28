@@ -1,11 +1,9 @@
 ﻿using Entities.Enums;
 using S7.Net;
 using S7.Net.Types;
-using System;
 using System.Collections.Generic;
-using System.Net.NetworkInformation;
-using System.Text;
 using System.Threading.Tasks;
+
 namespace DataAccess.Abstract
 {
     public interface IS7DriverDal
@@ -15,7 +13,7 @@ namespace DataAccess.Abstract
         Task<bool> ConnectAsync(string ipAddress, CpuType cpuType = CpuType.S71200, short rack = 0, short slot = 1);
         void Disconnect();
         Task<bool> PingAsync(string? ipAddress = null);
-       // Task<CpuState> GetCpuStatusAsync(); //Burada sorun var nedden tanımıyor
+        Task<CpuState> GetCpuStatusAsync(); // ◄── Hata çözüldü
 
         // Bulk / Class Okuma ve Yazma (DB1 & DB2 Eşleşmeleri)
         Task<T?> ReadClassAsync<T>(T instance, int dbNumber, int startByte = 0) where T : class, new();
@@ -24,6 +22,7 @@ namespace DataAccess.Abstract
         // Tag ve Bit Düzeyinde İşlemler
         Task<object?> ReadTagAsync(DataType dataType, int db, int startByte, VarType varType, int varCount = 1);
         Task WriteTagAsync(DataType dataType, int db, int startByte, object value);
+        Task WriteSetpointAsync(int db, int startByte, float value); // ◄── SystemSettingManager için eklendi
         Task<bool> ReadBitAsync(DataType dataType, int db, int startByte, int bitNumber);
         Task WriteBitAsync(DataType dataType, int db, int startByte, int bitNumber, bool value);
         Task PulseBitAsync(DataType dataType, int db, int startByte, int bitNumber, int durationMs = 500);
@@ -36,7 +35,5 @@ namespace DataAccess.Abstract
 
         // Çoklu Tag Okuma (Multi-Var Read)
         Task<List<DataItem>> ReadMultipleTagsAsync(List<DataItem> dataItems);
-
-
     }
 }

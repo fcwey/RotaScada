@@ -26,9 +26,9 @@ namespace Business.Concrete
                 UserId = userId,
                 ActionType = actionType,
                 Description = description,
-                OldValue = oldValue,
-                NewValue = newValue,
-                ClientIp = clientIp,
+                OldValues = oldValue,
+                NewValues = newValue,
+                UserIpAddress = clientIp,
                 Timestamp = DateTime.Now
             };
 
@@ -50,9 +50,9 @@ namespace Business.Concrete
                 UserId = l.UserId,
                 ActionType = l.ActionType,
                 Description = l.Description,
-                OldValue = l.OldValue,
-                NewValue = l.NewValue,
-                ClientIp = l.ClientIp,
+                OldValue = l.OldValues,
+                NewValue = l.NewValues,
+                ClientIp = l.UserIpAddress,
                 Timestamp = l.Timestamp
             }).ToList();
 

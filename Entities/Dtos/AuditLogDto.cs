@@ -8,7 +8,7 @@ namespace Entities.Dtos
     public class AuditLogDto : IDto
     {
         public long Id { get; set; }                            // Log kaydının benzersiz kimlik numarası
-        public int UserId { get; set; }                         // İşlemi gerçekleştiren operatörün kullanıcı ID'si
+        public int? UserId { get; set; }                         // İşlemi gerçekleştiren operatörün kullanıcı ID'si
         public string ActionType { get; set; } = string.Empty;  // Eylem türü (Örn: "SETPOINT_CHANGE", "RECIPE_DOWNLOAD")
         public string Description { get; set; } = string.Empty; // Yapılan eylemin detaylı açıklaması
         public string? OldValue { get; set; }                   // Değiştirilmeden önceki eski parametre değeri

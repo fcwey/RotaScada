@@ -4,6 +4,7 @@ using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework.Contexts;
 using Entities.Concrete;
 using Entities.Structures;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using S7.Net;
 using System;
@@ -17,11 +18,33 @@ namespace Business.Concrete
     {
         private readonly NorthwindContext _context;
         private readonly IS7DriverDal _s7DriverDal;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public RecipeManager(NorthwindContext context, IS7DriverDal s7DriverDal)
+        public RecipeManager(NorthwindContext context, IS7DriverDal s7DriverDal, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _s7DriverDal = s7DriverDal;
+            _httpContextAccessor = httpContextAccessor;
+        }
+
+        // İstemcinin Gerçek IP Adresini Dinamik Çeken Yardımcı Metot
+        private string GetClientIpAddress()
+        {
+            var httpContext = _httpContextAccessor?.HttpContext;
+            if (httpContext == null) return "127.0.0.1";
+
+            string? ip = httpContext.Request.Headers["X-Forwarded-For"].FirstOrDefault();
+            if (string.IsNullOrEmpty(ip))
+            {
+                ip = httpContext.Connection.RemoteIpAddress?.ToString();
+            }
+            return ip ?? "127.0.0.1";
+        }
+
+        // Benzersiz Parti Kodu Üretici (Örn: BATCH-20261028-012845)
+        private string GenerateUniqueBatchCode()
+        {
+            return $"BATCH-{DateTime.Now:yyyyMMdd-HHmmss}";
         }
 
         public async Task<IDataResult<List<Recipe>>> GetAllRecipesAsync()
@@ -61,8 +84,10 @@ namespace Business.Concrete
         }
 
         // 1. Reçeteyi PLC DB2'ye İndir (Audit Log Destekli)
-        public async Task<IResult> DownloadRecipeToPlcAsync(int recipeId, int targetDbNumber = 2, int? userId = null, string userIp = "127.0.0.1")
+        public async Task<IResult> DownloadRecipeToPlcAsync(int recipeId, int targetDbNumber = 2, int? userId = null, string? userIp = null)
         {
+            userIp ??= GetClientIpAddress();
+
             var recipe = await _context.Recipes
                 .Include(r => r.Steps)
                 .FirstOrDefaultAsync(r => r.Id == recipeId);
@@ -127,32 +152,56 @@ namespace Business.Concrete
             return new SuccessResult($"'{recipe.RecipeName}' reçetesi PLC DB{targetDbNumber} alanına başarıyla indirildi.");
         }
 
-        // 2. Reçeteyi İndir ve Fırını Başlat (Audit Log Destekli)
-        public async Task<IResult> DownloadAndStartRecipeAsync(int recipeId, int? userId = null, string userIp = "127.0.0.1")
+        // 2. Reçeteyi İndir, Otomatik Batch Kaydı Aç ve Fırını Başlat
+        public async Task<IResult> DownloadAndStartRecipeAsync(int recipeId, int? userId = null, string? userIp = null)
         {
+            userIp ??= GetClientIpAddress();
+
+            // A) Fırında Aktif Çalışan Şarj Kontrolü
+            var activeBatch = await _context.Batches.FirstOrDefaultAsync(b => b.Status == "RUNNING");
+            if (activeBatch != null)
+            {
+                return new ErrorResult($"Fırında zaten çalışan bir şarj mevcut! ({activeBatch.BatchCode}). Yeni şarj başlatmadan önce mevcut şarjı sonlandırın.");
+            }
+
+            // B) Reçeteyi PLC DB2'ye İndir
             var downloadResult = await DownloadRecipeToPlcAsync(recipeId, targetDbNumber: 2, userId, userIp);
             if (!downloadResult.IsSuccess)
                 return downloadResult;
 
             try
             {
-                // DB3.DBX0.0 adresine 1 saniyelik Start Darbesi gönderilir
+                // C) Otomatik Yeni Batch Kaydı Oluşturma
+                var newBatch = new Batch
+                {
+                    BatchCode = GenerateUniqueBatchCode(),
+                    RecipeId = recipeId,
+                    OperatorUserId = userId ?? 1,
+                    StartTime = DateTime.Now,
+                    Status = "RUNNING",
+                    CompletionNote = "Fırın otomasyonu başlatıldı."
+                };
+
+                await _context.Batches.AddAsync(newBatch);
+                await _context.SaveChangesAsync(); // newBatch.Id burada oluşur
+
+                // D) DB3.DBX0.0 adresine 1 saniyelik Start Darbesi gönderilir
                 await _s7DriverDal.PulseBitAsync(DataType.DataBlock, db: 3, startByte: 0, bitNumber: 0, durationMs: 1000);
 
-                // Start Komutu Audit Log Kaydı
+                // E) Audit Log Kaydı
                 await _context.AuditLogs.AddAsync(new AuditLog
                 {
                     UserId = userId,
                     UserIpAddress = userIp,
-                    ActionType = "PLC_START_PULSE",
+                    ActionType = "BATCH_START_PULSE",
                     ModuleName = "RecipeManager",
-                    Description = $"Reçete ID: {recipeId} için DB3.DBX0.0 adresine 1000ms Start darbesi gönderildi.",
+                    Description = $"'{newBatch.BatchCode}' (Batch ID: {newBatch.Id}) şarjı başlatıldı ve DB3.DBX0.0 adresine 1000ms Start darbesi gönderildi.",
                     IsSuccess = true,
                     Timestamp = DateTime.Now
                 });
                 await _context.SaveChangesAsync();
 
-                return new SuccessResult("Reçete PLC'ye indirildi ve Fırın Start komutu tetiklendi.");
+                return new SuccessDataResult<int>(newBatch.Id, $"Reçete PLC'ye indirildi. '{newBatch.BatchCode}' kodlu Şarj (Batch ID: {newBatch.Id}) başlatıldı.");
             }
             catch (Exception ex)
             {
@@ -160,16 +209,49 @@ namespace Business.Concrete
                 {
                     UserId = userId,
                     UserIpAddress = userIp,
-                    ActionType = "PLC_START_PULSE_ERROR",
+                    ActionType = "BATCH_START_ERROR",
                     ModuleName = "RecipeManager",
-                    Description = $"Start darbesi gönderilirken hata oluştu: {ex.Message}",
+                    Description = $"Şarj başlatılırken hata oluştu: {ex.Message}",
                     IsSuccess = false,
                     Timestamp = DateTime.Now
                 });
                 await _context.SaveChangesAsync();
 
-                return new ErrorResult($"Reçete yüklendi fakat Start verilirken hata oluştu: {ex.Message}");
+                return new ErrorResult($"Reçete yüklendi fakat Şarj/Start başlatılırken hata oluştu: {ex.Message}");
             }
+        }
+
+        // 3. Aktif Şarjı Tamamlama / Kapatma Metodu
+        public async Task<IResult> StopActiveBatchAsync(string completionNote = "Proses tamamlandı.", int? userId = null, string? userIp = null)
+        {
+            userIp ??= GetClientIpAddress();
+
+            var activeBatch = await _context.Batches.FirstOrDefaultAsync(b => b.Status == "RUNNING");
+            if (activeBatch == null)
+            {
+                return new ErrorResult("Kapatılacak aktif bir şarj bulunamadı.");
+            }
+
+            activeBatch.EndTime = DateTime.Now;
+            activeBatch.Status = "COMPLETED";
+            activeBatch.CompletionNote = completionNote;
+
+            _context.Batches.Update(activeBatch);
+
+            await _context.AuditLogs.AddAsync(new AuditLog
+            {
+                UserId = userId,
+                UserIpAddress = userIp,
+                ActionType = "BATCH_COMPLETED",
+                ModuleName = "RecipeManager",
+                Description = $"'{activeBatch.BatchCode}' kodlu şarj tamamlandı olarak kapatıldı. Not: {completionNote}",
+                IsSuccess = true,
+                Timestamp = DateTime.Now
+            });
+
+            await _context.SaveChangesAsync();
+
+            return new SuccessResult($"'{activeBatch.BatchCode}' kodlu şarj başarıyla tamamlandı.");
         }
     }
 }

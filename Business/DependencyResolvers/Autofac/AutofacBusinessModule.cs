@@ -4,6 +4,7 @@ using Business.Abstract;
 using Business.Concrete;
 using Castle.DynamicProxy;
 using Core.Utilities.Interceptors;
+using Core.Utilities.IoC;
 using Core.Utilities.Security.Jwt;
 using DataAccess.Abstract;
 using DataAccess.Concrete.EntityFramework;
@@ -21,13 +22,7 @@ namespace Business.DependencyResolvers.Autofac
         //Şunun karşılığı sudur dediğimiz  bölgedir.
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterType<ProductManager>().As<IProductService>();
-            builder.RegisterType<EfProductDal>().As<IProductDal>();
-
-            builder.RegisterType<CategoryManager>().As<ICategoryService>();
-            builder.RegisterType<EfCategoryDal>().As<ICategoryDal>();
-
-
+            
 
             builder.RegisterType<PlcManager>().As<IPlcService>().SingleInstance();
 
@@ -49,7 +44,7 @@ namespace Business.DependencyResolvers.Autofac
 
             builder.RegisterType<ReportManager>().As<IReportService>().SingleInstance();
             builder.RegisterType<InterlockManager>().As<IInterlockService>().SingleInstance();
-
+            builder.RegisterType<SystemSettingManager>().As<ISystemSettingService>().SingleInstance();
 
             //-----------------------------
             builder.RegisterType<UserManager>().As<IUserService>();
@@ -57,6 +52,9 @@ namespace Business.DependencyResolvers.Autofac
 
             builder.RegisterType<AuthManager>().As<IAuthService>();
             builder.RegisterType<JwtHelper>().As<ITokenHelper>();
+
+            builder.RegisterType<UserContextHelper>().As<IUserContextHelper>().SingleInstance();
+            builder.RegisterType<SystemSettingManager>().As<ISystemSettingService>().SingleInstance();
 
             var assembly = System.Reflection.Assembly.GetExecutingAssembly();
             builder.RegisterAssemblyTypes(assembly).AsImplementedInterfaces()
