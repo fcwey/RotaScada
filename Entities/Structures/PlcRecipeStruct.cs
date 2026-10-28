@@ -3,6 +3,7 @@
     // TIA Portal "Recipe" STRUCT Karşılığı (DB2 Reçete Bloğu)
     public class PlcRecipeStruct
     {
+
         public short RecipeID { get; set; }            // Int (2 Byte)
         public short RecipeType { get; set; }          // Int (2 Byte)
         public string RecipeName { get; set; } = string.Empty; // String[30] (32 Byte)
