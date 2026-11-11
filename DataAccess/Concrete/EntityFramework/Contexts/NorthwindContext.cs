@@ -8,6 +8,7 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
 {
     public class NorthwindContext : DbContext
     {
+        // Veritabanı bağlantısını ve SQL Server ayarlarını yapılandırır.
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             optionsBuilder.UseSqlServer(@"Server=(localdb)\mssqllocaldb;Database=RfMalzemeKabul;Trusted_Connection=true", builder =>
@@ -17,20 +18,21 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
             base.OnConfiguring(optionsBuilder);
         }
 
- 
+
         // SCADA Tabloları
         public DbSet<Alarm> Alarms { get; set; }
         public DbSet<Recipe> Recipes { get; set; }
         public DbSet<RecipeStep> RecipeSteps { get; set; } //  (20 Adımlı Reçete Detayları)
         public DbSet<Batch> Batches { get; set; }
         public DbSet<ProcessDataLog> ProcessDataLogs { get; set; }
-        public DbSet<AuditLog> AuditLogs { get; set; }  
+        public DbSet<AuditLog> AuditLogs { get; set; }
 
         // Mal Kabul ve Kimlik Tabloları
         public DbSet<User> Users { get; set; }
         public DbSet<OperationClaim> OperationClaims { get; set; }
         public DbSet<UserOperationClaim> UserOperationClaims { get; set; }
 
+        // Tablo ilişkilerini, indeksleri ve kısıtları tanımlar.
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -56,11 +58,20 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
                 .Property(r => r.RecipeName)
                 .HasMaxLength(30)
                 .IsRequired();
+
+            // 4. Aynı anda yalnızca bir RUNNING şarj olabilir (filtreli unique index)
+            modelBuilder.Entity<Batch>()
+                .HasIndex(b => b.Status)
+                .IsUnique()
+                .HasFilter("[Status] = 'RUNNING'")
+                .HasDatabaseName("UX_Batch_SingleRunning");
         }
+
         // =========================================================================
         // OTOMATİK İŞLEM KAYDI (AUDIT LOG) INTERCEPTOR METOTLARI
         // =========================================================================
 
+        // Kaydetmeden önce değişiklikleri toplar, kaydettikten sonra audit log yazar.
         public override async Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var auditEntries = OnBeforeSaveChanges();
@@ -69,6 +80,7 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
             return result;
         }
 
+        // Değişen kayıtların eski/yeni değerlerini audit kaydı için hazırlar.
         private List<AuditEntry> OnBeforeSaveChanges()
         {
             ChangeTracker.DetectChanges();
@@ -121,6 +133,7 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
             return auditEntries;
         }
 
+        // Hazırlanan audit kayıtlarını AuditLogs tablosuna yazar.
         private async Task OnAfterSaveChangesAsync(List<AuditEntry> auditEntries)
         {
             if (auditEntries == null || auditEntries.Count == 0) return;
@@ -141,7 +154,8 @@ namespace DataAccess.Concrete.EntityFramework.Contexts
             await base.SaveChangesAsync();
         }
     }
-    // Audit İşlemi İçin Yardımcı Veri Taşıyıcı Sınıf
+
+    // Audit işlemi için yardımcı veri taşıyıcı sınıf
     internal class AuditEntry
     {
         public string TableName { get; set; } = string.Empty;

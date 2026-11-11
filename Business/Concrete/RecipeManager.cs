@@ -27,7 +27,7 @@ namespace Business.Concrete
             _httpContextAccessor = httpContextAccessor;
         }
 
-        // İstemcinin Gerçek IP Adresini Dinamik Çeken Yardımcı Metot
+        // İstemcinin IP adresini istekten okur, istek yoksa 127.0.0.1 döner.
         private string GetClientIpAddress()
         {
             var httpContext = _httpContextAccessor?.HttpContext;
@@ -41,18 +41,20 @@ namespace Business.Concrete
             return ip ?? "127.0.0.1";
         }
 
-        // Benzersiz Parti Kodu Üretici (Örn: BATCH-20261028-012845)
+        // Tarih ve saatten parti kodu üretir (Örn: BATCH-20261028-012845).
         private string GenerateUniqueBatchCode()
         {
             return $"BATCH-{DateTime.Now:yyyyMMdd-HHmmss}";
         }
 
+        // Tüm reçeteleri adımlarıyla birlikte listeler.
         public async Task<IDataResult<List<Recipe>>> GetAllRecipesAsync()
         {
             var recipes = await _context.Recipes.Include(r => r.Steps).ToListAsync();
             return new SuccessDataResult<List<Recipe>>(recipes, "Reçeteler listelendi.");
         }
 
+        // Verilen id'ye ait reçeteyi adımlarıyla birlikte getirir.
         public async Task<IDataResult<Recipe>> GetRecipeByIdAsync(int id)
         {
             var recipe = await _context.Recipes.Include(r => r.Steps).FirstOrDefaultAsync(r => r.Id == id);
@@ -60,6 +62,7 @@ namespace Business.Concrete
             return new SuccessDataResult<Recipe>(recipe);
         }
 
+        // Yeni reçeteyi veritabanına ekler.
         public async Task<IResult> AddRecipeAsync(Recipe recipe)
         {
             await _context.Recipes.AddAsync(recipe);
@@ -67,6 +70,7 @@ namespace Business.Concrete
             return new SuccessResult("Reçete veritabanına eklendi.");
         }
 
+        // Mevcut reçeteyi günceller.
         public async Task<IResult> UpdateRecipeAsync(Recipe recipe)
         {
             _context.Recipes.Update(recipe);
@@ -74,6 +78,7 @@ namespace Business.Concrete
             return new SuccessResult("Reçete güncellendi.");
         }
 
+        // Verilen id'ye ait reçeteyi siler.
         public async Task<IResult> DeleteRecipeAsync(int id)
         {
             var recipe = await _context.Recipes.FindAsync(id);
@@ -83,7 +88,7 @@ namespace Business.Concrete
             return new SuccessResult("Reçete silindi.");
         }
 
-        // 1. Reçeteyi PLC DB2'ye İndir (Audit Log Destekli)
+        // Reçeteyi PLC'nin belirtilen DB bloğuna yazar ve audit log kaydı düşer.
         public async Task<IResult> DownloadRecipeToPlcAsync(int recipeId, int targetDbNumber = 2, int? userId = null, string? userIp = null)
         {
             userIp ??= GetClientIpAddress();
@@ -152,43 +157,62 @@ namespace Business.Concrete
             return new SuccessResult($"'{recipe.RecipeName}' reçetesi PLC DB{targetDbNumber} alanına başarıyla indirildi.");
         }
 
-        // 2. Reçeteyi İndir, Otomatik Batch Kaydı Aç ve Fırını Başlat
+        // Şarj kaydını açar, reçeteyi PLC'ye indirir ve start darbesi gönderir; hata olursa şarjı ABORTED yapar.
         public async Task<IResult> DownloadAndStartRecipeAsync(int recipeId, int? userId = null, string? userIp = null)
         {
             userIp ??= GetClientIpAddress();
 
-            // A) Fırında Aktif Çalışan Şarj Kontrolü
-            var activeBatch = await _context.Batches.FirstOrDefaultAsync(b => b.Status == "RUNNING");
+            // A) Hızlı kontrol: Fırında aktif çalışan şarj var mı? (Asıl koruma veritabanındaki unique index'tir)
+            var activeBatch = await _context.Batches.AsNoTracking().FirstOrDefaultAsync(b => b.Status == "RUNNING");
             if (activeBatch != null)
             {
                 return new ErrorResult($"Fırında zaten çalışan bir şarj mevcut! ({activeBatch.BatchCode}). Yeni şarj başlatmadan önce mevcut şarjı sonlandırın.");
             }
 
-            // B) Reçeteyi PLC DB2'ye İndir
-            var downloadResult = await DownloadRecipeToPlcAsync(recipeId, targetDbNumber: 2, userId, userIp);
-            if (!downloadResult.IsSuccess)
-                return downloadResult;
+            // B) Reçete var mı? (Şarj kaydı açılmadan önce kontrol edilir)
+            bool recipeExists = await _context.Recipes.AnyAsync(r => r.Id == recipeId);
+            if (!recipeExists)
+            {
+                return new ErrorResult("Başlatılacak reçete veritabanında bulunamadı.");
+            }
+
+            // C) Şarj kaydı PLC'ye dokunulmadan ÖNCE açılır; unique index sayesinde aynı anda yalnızca bir istek bunu başarır
+            var newBatch = new Batch
+            {
+                BatchCode = GenerateUniqueBatchCode(),
+                RecipeId = recipeId,
+                OperatorUserId = userId ?? 1,
+                StartTime = DateTime.Now,
+                Status = "RUNNING",
+                CompletionNote = "Fırın otomasyonu başlatıldı."
+            };
 
             try
             {
-                // C) Otomatik Yeni Batch Kaydı Oluşturma
-                var newBatch = new Batch
-                {
-                    BatchCode = GenerateUniqueBatchCode(),
-                    RecipeId = recipeId,
-                    OperatorUserId = userId ?? 1,
-                    StartTime = DateTime.Now,
-                    Status = "RUNNING",
-                    CompletionNote = "Fırın otomasyonu başlatıldı."
-                };
-
                 await _context.Batches.AddAsync(newBatch);
                 await _context.SaveChangesAsync(); // newBatch.Id burada oluşur
+            }
+            catch (DbUpdateException)
+            {
+                // Başarısız kayıt, paylaşılan context'in takibinde kalıp sonraki SaveChanges çağrılarını bozmasın
+                _context.Entry(newBatch).State = EntityState.Detached;
+                return new ErrorResult("Fırında zaten çalışan bir şarj mevcut! Aynı anda başka bir başlatma isteği işlendi.");
+            }
 
-                // D) DB3.DBX0.0 adresine 1 saniyelik Start Darbesi gönderilir
+            try
+            {
+                // D) Reçeteyi PLC DB2'ye indir
+                var downloadResult = await DownloadRecipeToPlcAsync(recipeId, targetDbNumber: 2, userId, userIp);
+                if (!downloadResult.IsSuccess)
+                {
+                    await AbortBatchAsync(newBatch, $"Reçete PLC'ye indirilemedi: {downloadResult.Message}", userId, userIp);
+                    return downloadResult;
+                }
+
+                // E) DB3.DBX0.0 adresine 1 saniyelik Start darbesi gönderilir
                 await _s7DriverDal.PulseBitAsync(DataType.DataBlock, db: 3, startByte: 0, bitNumber: 0, durationMs: 1000);
 
-                // E) Audit Log Kaydı
+                // F) Audit Log Kaydı
                 await _context.AuditLogs.AddAsync(new AuditLog
                 {
                     UserId = userId,
@@ -205,23 +229,47 @@ namespace Business.Concrete
             }
             catch (Exception ex)
             {
+                // Şarj kaydı RUNNING bırakılmaz; aksi halde sonraki tüm başlatmalar bloke olur
+                bool aborted = await AbortBatchAsync(newBatch, $"Şarj başlatılırken hata oluştu: {ex.Message}", userId, userIp);
+
+                string abortInfo = aborted
+                    ? "Şarj kaydı ABORTED olarak kapatıldı."
+                    : "Şarj kaydı ABORTED yapılamadı, veritabanını manuel kontrol edin.";
+
+                return new ErrorResult($"Şarj başlatılamadı: {ex.Message} {abortInfo} Fırının durumunu PLC üzerinden kontrol edin.");
+            }
+        }
+
+        // Şarjı ABORTED olarak kapatır ve audit log düşer; başarılıysa true döner.
+        private async Task<bool> AbortBatchAsync(Batch batch, string note, int? userId, string userIp)
+        {
+            try
+            {
+                batch.Status = "ABORTED";
+                batch.EndTime = DateTime.Now;
+                batch.CompletionNote = note;
+                _context.Batches.Update(batch);
+
                 await _context.AuditLogs.AddAsync(new AuditLog
                 {
                     UserId = userId,
                     UserIpAddress = userIp,
                     ActionType = "BATCH_START_ERROR",
                     ModuleName = "RecipeManager",
-                    Description = $"Şarj başlatılırken hata oluştu: {ex.Message}",
+                    Description = $"'{batch.BatchCode}' şarjı iptal edildi (ABORTED). {note}",
                     IsSuccess = false,
                     Timestamp = DateTime.Now
                 });
                 await _context.SaveChangesAsync();
-
-                return new ErrorResult($"Reçete yüklendi fakat Şarj/Start başlatılırken hata oluştu: {ex.Message}");
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
-        // 3. Aktif Şarjı Tamamlama / Kapatma Metodu
+        // Çalışan (RUNNING) şarjı COMPLETED olarak kapatır.
         public async Task<IResult> StopActiveBatchAsync(string completionNote = "Proses tamamlandı.", int? userId = null, string? userIp = null)
         {
             userIp ??= GetClientIpAddress();

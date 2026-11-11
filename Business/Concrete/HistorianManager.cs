@@ -4,9 +4,11 @@ using DataAccess.Concrete.EntityFramework.Contexts;
 using Entities.Concrete;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Entities.Dtos;
 using Microsoft.EntityFrameworkCore;
+
 namespace Business.Concrete
 {
     public class HistorianManager : IHistorianService
@@ -18,13 +20,31 @@ namespace Business.Concrete
             _context = context;
         }
 
+        // Telemetri kaydını, BatchId boşsa aktif şarjın kimliğiyle etiketleyip veritabanına ekler.
         public async Task<IResult> LogProcessDataAsync(ProcessDataLog dataLog)
         {
+            // DÜZELTİLDİ (Madde 5): BatchId verilmediyse çalışan şarjın id'si atanır, böylece şarj raporları dolu gelir.
+            if (dataLog.BatchId == null)
+            {
+                dataLog.BatchId = await GetActiveBatchIdAsync();
+            }
+
             await _context.ProcessDataLogs.AddAsync(dataLog);
             await _context.SaveChangesAsync();
             return new SuccessResult("Telemetri verisi kaydedildi.");
         }
 
+        // Çalışan (RUNNING) şarjın id'sini döner, çalışan şarj yoksa null döner.
+        private async Task<int?> GetActiveBatchIdAsync()
+        {
+            return await _context.Batches
+                .AsNoTracking()
+                .Where(b => b.Status == "RUNNING")
+                .Select(b => (int?)b.Id)
+                .FirstOrDefaultAsync();
+        }
+
+        // Trend grafiği için belirtilen aralıktaki veriyi seyrekleştirerek (downsampling) döner.
         public async Task<IDataResult<List<TrendPointDto>>> GetTrendDataAsync(string tagName, DateTime start, DateTime end, int targetPointCount = 500)
         {
             // Zaman aralığındaki ham veriyi çeker
@@ -57,6 +77,7 @@ namespace Business.Concrete
             return new SuccessDataResult<List<TrendPointDto>>(trendPoints);
         }
 
+        // Belirtilen tarihten eski telemetri kayıtlarını siler.
         public async Task<IResult> CompressOldLogsAsync(DateTime olderThan)
         {
             var oldLogs = await _context.ProcessDataLogs
@@ -69,6 +90,7 @@ namespace Business.Concrete
             return new SuccessResult($"{oldLogs.Count} adet eski telemetri kaydı temizlendi.");
         }
 
+        // Tag adına karşılık gelen sayısal değeri telemetri kaydından seçer.
         private float ExtractValueByTag(ProcessDataLog log, string tagName) => tagName switch
         {
             "Zone1Temperature" => log.Zone1Temperature,

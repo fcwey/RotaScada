@@ -3,6 +3,7 @@ using Entities.Enums;
 using S7.Net;
 using S7.Net.Types;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Net.NetworkInformation;
 using System.Text;
@@ -19,8 +20,13 @@ namespace DataAccess.Concrete.S7Net
         private short _slot = 1;
         private bool _disposed = false;
 
+        // Aynı bit üzerinde aynı anda birden fazla darbe başlatılmasını engelleyen kayıt.
+        private readonly ConcurrentDictionary<string, byte> _activePulses = new();
+
+        // PLC bağlantısının aktif olup olmadığını döner.
         public bool IsConnected => _plc != null && _plc.IsConnected;
 
+        // Verilen IP ve CPU bilgileriyle PLC'ye bağlanır, başarı durumunu döner.
         public async Task<bool> ConnectAsync(string ipAddress, CpuType cpuType = CpuType.S71200, short rack = 0, short slot = 1)
         {
             _ipAddress = ipAddress;
@@ -48,6 +54,7 @@ namespace DataAccess.Concrete.S7Net
             }
         }
 
+        // PLC bağlantısını kapatır.
         public void Disconnect()
         {
             _semaphore.Wait();
@@ -64,6 +71,7 @@ namespace DataAccess.Concrete.S7Net
             }
         }
 
+        // PLC IP adresine ping atar, yanıt gelirse true döner.
         public async Task<bool> PingAsync(string? ipAddress = null)
         {
             string targetIp = ipAddress ?? _ipAddress;
@@ -79,8 +87,7 @@ namespace DataAccess.Concrete.S7Net
             }
         }
 
-  
-
+        // Bir DB bloğunu tek seferde okuyup verilen sınıf nesnesine doldurur.
         public async Task<T?> ReadClassAsync<T>(T instance, int dbNumber, int startByte = 0) where T : class, new()
         {
             await _semaphore.WaitAsync();
@@ -96,6 +103,7 @@ namespace DataAccess.Concrete.S7Net
             }
         }
 
+        // Verilen sınıf nesnesini tek seferde PLC DB bloğuna yazar.
         public async Task WriteClassAsync<T>(T instance, int dbNumber, int startByte = 0) where T : class
         {
             await _semaphore.WaitAsync();
@@ -110,6 +118,7 @@ namespace DataAccess.Concrete.S7Net
             }
         }
 
+        // Belirtilen adresten tek bir değişkeni (tag) okur.
         public async Task<object?> ReadTagAsync(DataType dataType, int db, int startByte, VarType varType, int varCount = 1)
         {
             await _semaphore.WaitAsync();
@@ -124,6 +133,7 @@ namespace DataAccess.Concrete.S7Net
             }
         }
 
+        // Belirtilen adrese tek bir değişken (tag) değeri yazar.
         public async Task WriteTagAsync(DataType dataType, int db, int startByte, object value)
         {
             await _semaphore.WaitAsync();
@@ -138,18 +148,26 @@ namespace DataAccess.Concrete.S7Net
             }
         }
 
+        // Belirtilen adresteki bir biti okur (bit numarası S7.Net'e iletilir).
         public async Task<bool> ReadBitAsync(DataType dataType, int db, int startByte, int bitNumber)
         {
+            if (bitNumber < 0 || bitNumber > 7)
+                throw new ArgumentOutOfRangeException(nameof(bitNumber), "Bit numarası 0-7 aralığında olmalıdır.");
+
             await _semaphore.WaitAsync();
             try
             {
                 EnsureConnected();
-                var result = await _plc!.ReadAsync(dataType, db, startByte, VarType.Bit, 1);
-                if (result is bool boolValue) return boolValue;
 
-                // Byte maskeleme yöntemi
-                byte byteValue = Convert.ToByte(result);
-                return (byteValue & (1 << bitNumber)) != 0;
+                // DÜZELTİLDİ (Madde 2): bitNumber, ReadAsync'in bitAdr parametresi olarak iletiliyor.
+                var result = await _plc!.ReadAsync(dataType, db, startByte, VarType.Bit, 1, (byte)bitNumber);
+
+                if (result is bool boolValue)
+                    return boolValue;
+
+                // Okuma beklenen tipte dönmediyse sessizce false dönmek yerine hata fırlatılır (ACK'nin yanlış okunmasını önler).
+                throw new InvalidOperationException(
+                    $"Bit okunamadı. Adres: {dataType} DB{db}.DBX{startByte}.{bitNumber}");
             }
             finally
             {
@@ -157,17 +175,17 @@ namespace DataAccess.Concrete.S7Net
             }
         }
 
+        // Belirtilen adresteki bire true/false değeri yazar (S7.Net'in WriteBitAsync metoduyla).
         public async Task WriteBitAsync(DataType dataType, int db, int startByte, int bitNumber, bool value)
         {
+            if (bitNumber < 0 || bitNumber > 7)
+                throw new ArgumentOutOfRangeException(nameof(bitNumber), "Bit numarası 0-7 aralığında olmalıdır.");
+
             await _semaphore.WaitAsync();
             try
             {
                 EnsureConnected();
-                // S7.Net DBX formatında bit yazımı: e.g. "DB1.DBX0.1"
-                string address = $"{dataType}{db}.DBX{startByte}.{bitNumber}";
-                if (dataType == DataType.Memory) address = $"M{startByte}.{bitNumber}";
-
-                await _plc!.WriteAsync(address, value);
+                await _plc!.WriteBitAsync(dataType, db, startByte, bitNumber, value);
             }
             finally
             {
@@ -175,13 +193,76 @@ namespace DataAccess.Concrete.S7Net
             }
         }
 
+        // Biti true yapar, belirtilen süre bekler ve hata olsa bile mutlaka false'a çeker (start darbesi).
         public async Task PulseBitAsync(DataType dataType, int db, int startByte, int bitNumber, int durationMs = 500)
         {
-            await WriteBitAsync(dataType, db, startByte, bitNumber, true);
-            await Task.Delay(durationMs);
-            await WriteBitAsync(dataType, db, startByte, bitNumber, false);
+            if (durationMs <= 0 || durationMs > 10000)
+                throw new ArgumentOutOfRangeException(nameof(durationMs), "Darbe süresi 1-10000 ms aralığında olmalıdır.");
+
+            string pulseKey = $"{dataType}:{db}:{startByte}:{bitNumber}";
+
+            // Aynı bit için başka bir darbe sürüyorsa yenisi başlatılmaz.
+            if (!_activePulses.TryAdd(pulseKey, 0))
+                throw new InvalidOperationException($"Bu bit için darbe zaten devam ediyor: DB{db}.DBX{startByte}.{bitNumber}");
+
+            bool writeAttempted = false;
+            Exception? pulseError = null;
+
+            try
+            {
+                // true yazımı PLC'ye ulaşıp yanıtı kaybolmuş olabilir; bu yüzden denendiği anda sıfırlama zorunlu sayılır.
+                writeAttempted = true;
+                await WriteBitAsync(dataType, db, startByte, bitNumber, true);
+
+                await Task.Delay(durationMs);
+            }
+            catch (Exception ex)
+            {
+                pulseError = ex;
+                throw;
+            }
+            finally
+            {
+                try
+                {
+                    if (writeAttempted)
+                    {
+                        bool resetOk = await ResetBitWithRetryAsync(dataType, db, startByte, bitNumber);
+                        if (!resetOk)
+                        {
+                            throw new InvalidOperationException(
+                                $"KRİTİK: DB{db}.DBX{startByte}.{bitNumber} biti false'a çekilemedi, PLC'de TRUE kalmış olabilir. PLC'yi kontrol edin.",
+                                pulseError);
+                        }
+                    }
+                }
+                finally
+                {
+                    _activePulses.TryRemove(pulseKey, out _);
+                }
+            }
         }
 
+        // Biti false'a çekmeyi birkaç kez dener, başarılı olursa true döner.
+        private async Task<bool> ResetBitWithRetryAsync(DataType dataType, int db, int startByte, int bitNumber, int maxAttempts = 3)
+        {
+            for (int attempt = 1; attempt <= maxAttempts; attempt++)
+            {
+                try
+                {
+                    await WriteBitAsync(dataType, db, startByte, bitNumber, false);
+                    return true;
+                }
+                catch (Exception)
+                {
+                    if (attempt < maxAttempts)
+                        await Task.Delay(100);
+                }
+            }
+            return false;
+        }
+
+        // Komut bitini gönderir, onay (ACK) bitini bekler ve komut bitini sıfırlar.
         public async Task<bool> ExecuteCommandWithAckAsync(
             int cmdDb, int cmdByte, int cmdBit,
             int ackDb, int ackByte, int ackBit,
@@ -213,6 +294,7 @@ namespace DataAccess.Concrete.S7Net
             return false;
         }
 
+        // Birden fazla değişkeni tek istekte okur.
         public async Task<List<DataItem>> ReadMultipleTagsAsync(List<DataItem> dataItems)
         {
             await _semaphore.WaitAsync();
@@ -228,6 +310,7 @@ namespace DataAccess.Concrete.S7Net
             }
         }
 
+        // Bağlantı kopuksa PLC'ye yeniden bağlanır, bağlanamazsa hata fırlatır.
         private void EnsureConnected()
         {
             if (_plc == null || !_plc.IsConnected)
@@ -240,6 +323,8 @@ namespace DataAccess.Concrete.S7Net
                 }
             }
         }
+
+        // PLC'nin çalışma durumunu (Run/Stop/Error/Unknown) ping ile tahmin eder.
         public async Task<CpuState> GetCpuStatusAsync()
         {
             if (!IsConnected)
@@ -257,6 +342,8 @@ namespace DataAccess.Concrete.S7Net
                 return CpuState.Error;
             }
         }
+
+        // PLC bağlantısını kapatır ve semaphore'u serbest bırakır.
         public void Dispose()
         {
             if (!_disposed)
@@ -271,6 +358,7 @@ namespace DataAccess.Concrete.S7Net
             GC.SuppressFinalize(this);
         }
 
+        // Float (Real) setpoint değerini belirtilen DB adresine yazar.
         public async Task WriteSetpointAsync(int db, int startByte, float value)
         {
             if (!IsConnected)
@@ -289,4 +377,3 @@ namespace DataAccess.Concrete.S7Net
         }
     }
 }
-
